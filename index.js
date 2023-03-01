@@ -39,7 +39,6 @@ let backgroundsounds;
 let bombsound;
 let healthsound;
 // let experiencesound;
-// yabba doo
 let sun;
 let selectability;
 let sunlevelup;
@@ -68,6 +67,7 @@ let facing;
 let rightattack;
 let leftattack;
 let losesound;
+let PAUSED;
 let powerups = {0:["Add a Fireball", "Fireballs burn through enemies dealing massive damage!"], 1:["Add a Stonewall", "Indestructible stones surround you, preventing enemies from getting near you. Enemies hit are permanently slowed."], 2:["Increase Speed", "Move faster to dodge and weave past enemies."], 3:["Increase Health", "More health makes you able to take more damage for longer."], 4:["Increase Defense", "Bolster your armor and take less damage from enemies."], 5:["Power up your Airball", "Enemies won't know when it's coming, but when it does, it's too late."], 6:["Increase Sun Orb Damage", "Shadows try to avoid the sun as much as possible, as it does massive damage."], 7:["Power up your Waterfield", "Surround yourself in an endless whirlpool that slows enemies in the tide."]};
 
 p5.disableFriendlyErrors = true;
@@ -175,6 +175,7 @@ function visualinit() {
 
 function resetstats() {
   facing = "right";
+  PAUSED = false;
   x1 = 0;
   y1 = 0;
   x2 = windowWidth;
@@ -185,8 +186,8 @@ function resetstats() {
   experiencepoints = 10;
   // experiencepoints = 29;
   level = 0;
-  time = 1;
-  // time = 600;
+  // time = 1;
+  time = 200;
   framecounter = 0;
   PLAYERSPEED = 3.25;
   // PLAYERSPEED = 5;
@@ -822,4 +823,20 @@ window.draw = () => {
     // clear();
     time += 1;
   }
+  let pause = createButton("Pause");
+  // buttonback.style("border-radius", "45px");
+  // buttonback.style("color", "#373737");
+  // buttonback.style("font-size", "28px");
+  // buttonback.style("border", "3px solid black");
+  pause.size(20, 20);
+  pause.position(windowWidth - 140, windowHeight * 1 / 20);
+  pause.mousePressed(() => {
+    if (!PAUSED) {
+      noLoop();
+      PAUSED = true;
+    } else {
+      loop();
+      PAUSED = false;
+    }
+  });
 };
