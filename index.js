@@ -922,6 +922,5 @@ window.draw = () => {
     selectability.play();
     selectability.setVolume(.1);
     chooseweapon();
-    // generateleveloptions();
   }
 };
