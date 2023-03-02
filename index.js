@@ -1,5 +1,8 @@
 let pausetext;
 let playagained;
+let weaponchosen;
+let chosebullets;
+let chosesword;
 let bg;
 let x1;
 let y1;
@@ -134,13 +137,13 @@ function initialize() {
   // had to ungroup, hide it, and make a new sprite to make it under the player
   player = new Sprite(windowWidth / 2, windowHeight / 2, 20, 40);
   // reset();
+  if (!playagained) {
+    timecounter();
+  }
   resetstats();
   groupinit();
   physicsinit();
   visualinit();
-  if (!playagained) {
-    timecounter();
-  }
   createCanvas(windowWidth, windowHeight);
 	while (experience.length < 30) {
     new experience.Sprite();
@@ -180,6 +183,10 @@ function visualinit() {
 }
 
 function resetstats() {
+  weaponchosen = false;
+  chosebullets = false;
+  chosesword = false;
+  playagained = false;
   pausetext = "Pause";
   facing = "right";
   PAUSED = false;
@@ -212,6 +219,44 @@ function resetstats() {
   BOUNCERDAMAGE = 1250;
   ROTATORDAMAGE = 550;
   BOUNCESPEED = 14;
+}
+
+function chooseweapon() {
+  fill(0,0,0,180);
+  rect(0, 0, windowWidth, windowHeight);
+  optionsdescription = ["Select Sun Orb", "Select Sun Sword"];
+  options = ["Select Sun Orb", "Select Sun Sword"];
+  for (let i = 0; i < 2; i++) {
+    let buttonback = createButton(optionsdescription[i]);
+    buttonback.style("border-radius", "45px");
+    buttonback.style("background-image", "radial-gradient(#FFD654 21%, #FFF054 80%)");
+    buttonback.style("color", "#373737");
+    buttonback.style("font-size", "28px");
+    buttonback.style("border", "3px solid black");
+    buttonback.size(windowWidth / 4, 2 * windowHeight / 3);
+    buttonback.position(i * windowWidth / 3 + 1 * windowWidth / 26, 1 * windowHeight / 5);
+    let button = createButton(options[i]);
+    button.style("border-radius", "5px");
+    button.style("background-color", "white");
+    button.style("border", "1px solid");
+    button.size(windowWidth / 10, windowHeight / 15);
+    button.position(i * windowWidth / 3 + 3 * windowWidth / 26, 4 * windowHeight / 5 - 20);
+    button.attribute = options[i];
+    noLoop();
+    button.mousePressed(() => {
+      weaponchosen = true;
+    if (button.attribute === 0) {
+      chosebullets = true;
+    } else {
+      chosesword = true;
+    }
+    let buttons = selectAll("button");
+    for (let i = 0; i < buttons.length; i++) {
+      buttons[i].remove();
+    }
+    loop();
+    });
+  }
 }
 
 function groupinit() {
@@ -872,4 +917,11 @@ window.draw = () => {
       PAUSED = false;
     }
   });
+  if (time === 25 && !weaponchosen) {
+    redraw();
+    selectability.play();
+    selectability.setVolume(.1);
+    chooseweapon();
+    // generateleveloptions();
+  }
 };
