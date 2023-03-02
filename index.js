@@ -1,3 +1,5 @@
+let pausetext;
+let playagained;
 let bg;
 let x1;
 let y1;
@@ -112,29 +114,33 @@ function preload() {
 }
 // to do:
 // save high score, if they have completed tutorial, maybe upgrade drops that can be equipped
-// add pause
 // add magnet
-// balance defense
 // add projectile enemies
 // health bar under player in red box
 // enemy damaged sound
 // add boss levels
 // add sword damage
-// add play again
 // clean up code with cull and waterfield.layer
 // balance game
 // cleaner visuals
 
 window.setup = () => {
+  initialize();
+};
+
+function initialize() {
   waterfield = new Sprite();
   waterfield.visible = false;
   // had to ungroup, hide it, and make a new sprite to make it under the player
   player = new Sprite(windowWidth / 2, windowHeight / 2, 20, 40);
+  // reset();
   resetstats();
   groupinit();
   physicsinit();
   visualinit();
-  timecounter();
+  if (!playagained) {
+    timecounter();
+  }
   createCanvas(windowWidth, windowHeight);
 	while (experience.length < 30) {
     new experience.Sprite();
@@ -145,7 +151,7 @@ window.setup = () => {
   backgroundmusic();
   let imagenumber = Math.ceil(random(5));
   bg = loadImage("images/" + imagenumber + "-min.jpg");
-};
+}
 
 function backgroundmusic() {
   backgroundsounds.play();
@@ -174,6 +180,7 @@ function visualinit() {
 }
 
 function resetstats() {
+  pausetext = "Pause";
   facing = "right";
   PAUSED = false;
   x1 = 0;
@@ -488,13 +495,7 @@ function generateleveloptions() {
       healthlevelup.play();
       healthlevelup.setVolume(.3);
     } else if (button.attribute === 4) {
-      if (RESISTANCE > .5) {
-        RESISTANCE -= .2;
-      } else if (RESISTANCE > .1) {
-        RESISTANCE -= .1;
-      } else {
-        RESISTANCE = .01;
-      }
+      RESISTANCE = RESISTANCE * .96;
       defenselevelup.play();
       defenselevelup.setVolume(.2);
     } else if (button.attribute === 5) {
@@ -570,7 +571,9 @@ window.mousePressed = () => {
 
 window.draw = () => {
   if (Math.floor(playerhealth) <= 0) {
-    backgroundsounds.setVolume(.005);
+    noLoop();
+    // backgroundsounds.setVolume(.005);
+    backgroundsounds.stop();
     losesound.play();
     losesound.setVolume(.3);
     let buttonback = createButton("Game over. The shadows have taken over the land and soon the Sun.");
@@ -581,13 +584,34 @@ window.draw = () => {
     buttonback.style("font-size", "30px");
     buttonback.size(windowWidth / 2, 2 * windowHeight / 3);
     buttonback.position(windowWidth / 6 + 2 / 24 * windowWidth, 1 * windowHeight / 5);
-    let button = createButton("Score: " + score);
-    button.style("background-color", "black");
-    button.style("color", "white");
-    button.style("border", "none");
-    button.size(windowWidth / 10, windowHeight / 15);
-    button.position(windowWidth / 3 + 3 * windowWidth / 26, 4 * windowHeight / 5 - 20);
-    noLoop();
+    let div = createDiv("Your Score: " + score);
+    div.style("color", "white");
+    div.style("font-size", "25px");
+    div.size(windowWidth / 10, windowHeight / 15);
+    div.style("text-align","center");
+    div.position(windowWidth / 3 + 3 * windowWidth / 26, 4 * windowHeight / 5 - 110);
+    let playagain = createButton("Play Again");
+    playagain.style("background-color", "black");
+    playagain.style("color", "white");
+    playagain.style("border", "none");
+    playagain.size(windowWidth / 10, windowHeight / 15);
+    playagain.position(windowWidth / 3 + 3 * windowWidth / 26, 4 * windowHeight / 5 - 20);
+    playagain.mousePressed(() => {
+      // reset
+      // reset();
+      // resetstats();
+      playagained = true;
+      allSprites.remove();
+      clear();
+      // reset();
+      losesound.stop();
+      initialize();
+      time = 25;
+      loop();
+      buttonback.remove();
+      div.remove();
+      playagain.remove();
+    });
   }
   for (let i = 0; i < bullets.length; i ++) {
     if (bullets[i].x > player.x + 2 * windowWidth / 3 || bullets[i].y > player.y + 2 * windowHeight / 3 || bullets[i].x < player.x - 2 * windowWidth / 3 || bullets[i].y < player.y - 2 * windowHeight / 3) {
@@ -756,6 +780,9 @@ window.draw = () => {
     rect(windowWidth * 3 / 10, windowHeight * 1 / 10, map(level- Math.floor(level), 0, 1, 0, windowWidth * 4 / 10), windowHeight * 1 / 20);
     fill("black");
     textFont("Courier New");
+    stroke(215, 215, 215);
+    strokeWeight(2);
+    textSize(18);
     text("Score: " + score, windowWidth - 140, windowHeight * 1 / 20);
     let minutes = Math.floor(time / 60);
     let extraSeconds = time % 60;
@@ -763,7 +790,7 @@ window.draw = () => {
     extraSeconds = extraSeconds < 10 ? "0" + extraSeconds : extraSeconds;
     text("Time: " + minutes + ":" + extraSeconds, 0 + 80, windowHeight * 1 / 20);
     text("Health: " + Math.floor(playerhealth) + "/" + PLAYERMAXHEALTH, windowWidth * 10 / 13, windowHeight * 2 / 15);
-    textSize(20);
+    textSize(22);
     textFont("Arial");
     text("Level: " + Math.floor(level), windowWidth / 2, windowHeight * 1 / 11);
   }
@@ -823,18 +850,24 @@ window.draw = () => {
     // clear();
     time += 1;
   }
-  let pause = createButton("Pause");
-  // buttonback.style("border-radius", "45px");
-  // buttonback.style("color", "#373737");
-  // buttonback.style("font-size", "28px");
-  // buttonback.style("border", "3px solid black");
-  pause.size(20, 20);
-  pause.position(windowWidth - 140, windowHeight * 1 / 20);
+  let pause = createButton(pausetext);
+  pause.style("border-radius", "5px");
+  // pause.style("color", "#373737");
+  pause.style("font-size", "12px");
+  pause.style("border", "none");
+  pause.size(50, 20);
+  pause.position(20, windowHeight * 1 / 20 + 10);
   pause.mousePressed(() => {
     if (!PAUSED) {
+      // pause.value("Play");
+      // pause.html("Pause");
+      pausetext = "Play";
       noLoop();
       PAUSED = true;
+      // pause.value = "Play";
     } else {
+      // pause.textContent = "Pause";
+      pausetext = "Pause";
       loop();
       PAUSED = false;
     }
