@@ -123,7 +123,7 @@ function preload() {
 // enemy damaged sound
 // add boss levels
 // add sword damage
-// clean up code with cull and waterfield.layer
+// clean up code with cull
 // balance game
 // cleaner visuals
 
@@ -233,13 +233,13 @@ function chooseweapon() {
     buttonback.style("font-size", "28px");
     buttonback.style("border", "3px solid black");
     buttonback.size(windowWidth / 4, 2 * windowHeight / 3);
-    buttonback.position(i * windowWidth / 3 + 1 * windowWidth / 26, 1 * windowHeight / 5);
+    buttonback.position(i * windowWidth / 3 + 1 * windowWidth / 26 + windowWidth / 6, 1 * windowHeight / 5);
     let button = createButton(options[i]);
     button.style("border-radius", "5px");
     button.style("background-color", "white");
     button.style("border", "1px solid");
     button.size(windowWidth / 10, windowHeight / 15);
-    button.position(i * windowWidth / 3 + 3 * windowWidth / 26, 4 * windowHeight / 5 - 20);
+    button.position(i * windowWidth / 3 + 3 * windowWidth / 26 + windowWidth / 6, 4 * windowHeight / 5 - 20);
     button.attribute = options[i];
     noLoop();
     button.mousePressed(() => {
