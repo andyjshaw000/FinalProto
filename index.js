@@ -43,7 +43,7 @@ let ROTATORDAMAGE;
 let backgroundsounds;
 let bombsound;
 let healthsound;
-// let experiencesound;
+let experiencesound;
 let sun;
 let selectability;
 let sunlevelup;
@@ -103,7 +103,7 @@ function preload() {
   losesound = loadSound("music/lose");
   bombsound = loadSound("music/bomb");
   healthsound = loadSound("music/health");
-  // experiencesound = loadSound("music/experience");
+  experiencesound = loadSound("music/experience");
   selectability = loadSound("music/selectability");
   sun = loadSound("music/sunorb");
   waterlevelup = loadSound("music/water");
@@ -132,11 +132,10 @@ window.setup = () => {
 };
 
 function initialize() {
-  waterfield = new Sprite();
-  waterfield.visible = false;
+  // waterfield = new Sprite();
+  // waterfield.visible = false;
   // had to ungroup, hide it, and make a new sprite to make it under the player
   player = new Sprite(windowWidth / 2, windowHeight / 2, 20, 40);
-  // reset();
   if (!playagained) {
     timecounter();
   }
@@ -201,10 +200,10 @@ function resetstats() {
   // experiencepoints = 29;
   level = 0;
   // time = 1;
+  // time = 25;
   time = 200;
   framecounter = 0;
   PLAYERSPEED = 3.25;
-  // PLAYERSPEED = 5;
   BULLETDAMAGE = 540;
   rotatorson = false;
   bounceron = false;
@@ -215,7 +214,7 @@ function resetstats() {
   fireballct = 0;
   RESISTANCE = 1;
   FIREBALLDAMAGE = 320;
-  WATERFIELDDAMAGE = 0;
+  WATERFIELDDAMAGE = 4;
   BOUNCERDAMAGE = 1250;
   ROTATORDAMAGE = 550;
   BOUNCESPEED = 14;
@@ -265,42 +264,28 @@ function groupinit() {
   healths = new Group();
   bullets = new Group();
   bouncer = new Group();
-  // waterfield = new Group();
+  waterfield = new Group();
   enemies = new Group();
 	experience = new Group();
   fireballs = new Group();
 }
 
 function physicsinit() {
-  // bullets.shapeColor = color("orange");
-  // bullets.rotateToDirection = true;
-  // player.color = "yellow";
-  // bombs.color = "black";
   player.autoCull = false;
   bombs.diameter = 20;
-  // rotators.color = "brown";
   rotators.diameter = 60;
-  // healths.color = "orange";
   healths.diameter = 30;
-  // fireballs.color = "red"
   fireballs.diameter = 80;
-	// experience.color = "lightgreen";
 	experience.diameter = 10;
   player.collider = "kinematic";
   player.rotationLock = true;
-  // player.bounciness = 0.001;
-  // enemies.mass = 0;
-  // bouncer.isSuperFast = true;
   bouncer.friction = 0;
   bouncer.x = player.x;
   bouncer.y = player.y;
-  // bouncer.color = "purple";
   bouncer.diameter = 55;
   waterfield.diameter = 180;
-  // waterfield.color = color(0,0,240,67);
   enemies.width = 15;
   enemies.height = 30;
-  // enemies.color = "black";
   enemies.rotationLock = true;
 }
 
@@ -374,8 +359,8 @@ function timecounter() {
 }
 
 function experiencecollect(player, experience) {
-  // experiencesound.play();
-  // experiencesound.setVolume(.05);
+  experiencesound.play();
+  experiencesound.setVolume(.05);
   experience.remove();
   experiencepoints += 1;
   checklevel();
@@ -559,9 +544,10 @@ function generateleveloptions() {
       sunlevelup.setVolume(.15);
     } else if (button.attribute === 7) {
       if (!wateron) {
-        // new waterfield.Sprite();
-        WATERFIELDDAMAGE = 4;
-        waterfield.visible = true;
+        new waterfield.Sprite();
+        waterfield.layer = 1;
+        // WATERFIELDDAMAGE = 4;
+        // waterfield.visible = true;
         wateron = true;
       } else {
         WATERFIELDDAMAGE += .6;
@@ -617,7 +603,6 @@ window.mousePressed = () => {
 window.draw = () => {
   if (Math.floor(playerhealth) <= 0) {
     noLoop();
-    // backgroundsounds.setVolume(.005);
     backgroundsounds.stop();
     losesound.play();
     losesound.setVolume(.3);
@@ -642,13 +627,9 @@ window.draw = () => {
     playagain.size(windowWidth / 10, windowHeight / 15);
     playagain.position(windowWidth / 3 + 3 * windowWidth / 26, 4 * windowHeight / 5 - 20);
     playagain.mousePressed(() => {
-      // reset
-      // reset();
-      // resetstats();
       playagained = true;
       allSprites.remove();
       clear();
-      // reset();
       losesound.stop();
       initialize();
       time = 25;
@@ -704,12 +685,8 @@ window.draw = () => {
   for (let i = 0; i < enemies.length; i++) {
     if (enemies[i].x > player.x + 2 * windowWidth / 3 || enemies[i].y > player.y + 2 * windowHeight / 3 || enemies[i].x < player.x - 2 * windowWidth / 3 || enemies[i].y < player.y - 2 * windowHeight / 3) {
       enemies[i].remove();
-      // if (enemies.length < Math.pow(windowWidth, 2) / 12000) {
       spawnenemy();
-      // }
-      // fix so you cant run through
     }
-    // enemies[i].moveTo(player.x, player.y, 2.5 + time / 300);
     let enemydirection = Math.atan2(player.y - enemies[i].y, player.x - enemies[i].x) * 180 / Math.PI;
     enemies[i].direction = enemydirection;
     enemies[i].speed = 2.5 + time / 300;
@@ -720,20 +697,14 @@ window.draw = () => {
     }
     enemies[i].life += 1;
     if (enemies[i].drag === -1) {
-      // enemies[i].moveTo(player.x, player.y, .25 * (2.5 + time / 300));
       enemies[i].speed = .25 * (2.5 + time / 300);
       enemies[i].drag = 0;
     }
     if (enemies[i].drag === -2) {
-      // enemies[i].moveTo(player.x, player.y, .75 * (2.5 + time / 300));
       enemies[i].speed = .75 * (2.5 + time / 300);
-      // enemies[i].move(30, angleTo(player.x, player.y, 0), 2.5 + time / 300);
     }
   }
   for (let i = 0; i < experience.length; i++) {
-    // if (experience[i].x > player.x + 2 * windowWidth || experience[i].y > player.y + 2 * windowHeight || experience[i].x < player.x - 2 * windowWidth || experience[i].y < player.y - 2 * windowHeight) {
-    //   experience[i].remove();
-    // }
     if (experience[i].life <= 99997300) {
       experience[i].remove();
       experiencepoints += 1;
@@ -810,8 +781,6 @@ window.draw = () => {
     textSize(30);
     textAlign(CENTER);
     text(texttutorial[Math.floor(time / 3)], windowWidth / 2, 120);
-    // player.x = constrain(player.x, 0, windowWidth);
-    // player.y = constrain(player.y, 0, windowHeight);
   }
   if (time > 20) {
     textSize(17);
@@ -884,34 +853,25 @@ window.draw = () => {
   }
   if (time % 180 === 0) {
     enemies.remove();
-    // for (let i = 0; i < enemies.length; i++) {
-    //   enemies[i].remove();
-    // }
     experience.remove();
     bombs.remove();
     healths.remove();
     bullets.remove();
     fireballs.remove();
-    // clear();
     time += 1;
   }
   let pause = createButton(pausetext);
   pause.style("border-radius", "5px");
-  // pause.style("color", "#373737");
   pause.style("font-size", "12px");
   pause.style("border", "none");
   pause.size(50, 20);
   pause.position(20, windowHeight * 1 / 20 + 10);
   pause.mousePressed(() => {
     if (!PAUSED) {
-      // pause.value("Play");
-      // pause.html("Pause");
       pausetext = "Play";
       noLoop();
       PAUSED = true;
-      // pause.value = "Play";
     } else {
-      // pause.textContent = "Pause";
       pausetext = "Pause";
       loop();
       PAUSED = false;
