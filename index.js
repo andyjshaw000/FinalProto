@@ -3,6 +3,7 @@ let playagained;
 let weaponchosen;
 let chosebullets;
 let chosesword;
+let SWORDDAMAGE;
 let bg;
 let x1;
 let y1;
@@ -18,6 +19,7 @@ let enemies;
 let time;
 let framecounter;
 let bullets;
+let swords;
 let bombs;
 let healths;
 let PLAYERSPEED;
@@ -176,6 +178,7 @@ function visualinit() {
   rotators.addAnimation("earthimage", earthimage);
   fireballs.addAnimation("fireimage", fireimage);
   bullets.addAnimation("sunimage", sunimage);
+  // swords.addAnimation("sunimage", sunimage);
   healths.addAnimation("healthimage", healthimage);
   bombs.addAnimation("bombimage", bombimage);
   experience.addAnimation("experienceimage", experienceimage);
@@ -200,11 +203,12 @@ function resetstats() {
   // experiencepoints = 29;
   level = 0;
   // time = 1;
-  // time = 25;
-  time = 200;
+  time = 24;
+  // time = 200;
   framecounter = 0;
   PLAYERSPEED = 3.25;
   BULLETDAMAGE = 540;
+  SWORDDAMAGE = 1040;
   rotatorson = false;
   bounceron = false;
   xdirection = 1;
@@ -223,7 +227,7 @@ function resetstats() {
 function chooseweapon() {
   fill(0,0,0,180);
   rect(0, 0, windowWidth, windowHeight);
-  optionsdescription = ["Select Sun Orb", "Select Sun Sword"];
+  optionsdescription = ["Select a Sun Orb that you can use to shoot enemies from afar", "Select a Sun Sword that allows you to slash through multiple enemies at close range"];
   options = ["Select Sun Orb", "Select Sun Sword"];
   for (let i = 0; i < 2; i++) {
     let buttonback = createButton(optionsdescription[i]);
@@ -244,16 +248,16 @@ function chooseweapon() {
     noLoop();
     button.mousePressed(() => {
       weaponchosen = true;
-    if (button.attribute === 0) {
-      chosebullets = true;
-    } else {
-      chosesword = true;
-    }
-    let buttons = selectAll("button");
-    for (let i = 0; i < buttons.length; i++) {
-      buttons[i].remove();
-    }
-    loop();
+      if (button.attribute === "Select Sun Orb") {
+        chosebullets = true;
+      } else if (button.attribute === "Select Sun Sword") {
+        chosesword = true;
+      }
+      let buttons = selectAll("button");
+      for (let i = 0; i < buttons.length; i++) {
+        buttons[i].remove();
+      }
+      loop();
     });
   }
 }
@@ -263,6 +267,7 @@ function groupinit() {
   rotators = new Group();
   healths = new Group();
   bullets = new Group();
+  swords = new Group();
   bouncer = new Group();
   waterfield = new Group();
   enemies = new Group();
@@ -299,6 +304,7 @@ function overlapchecker() {
   player.overlaps(fireballs);
   player.overlaps(waterfield);
   player.overlaps(bouncer);
+  player.overlaps(swords);
 
   experience.overlaps(experience);
   experience.overlaps(bullets);
@@ -309,6 +315,7 @@ function overlapchecker() {
   experience.overlaps(bouncer);
   experience.overlaps(waterfield);
   experience.overlaps(fireballs);
+  experience.overlaps(swords);
 
   enemies.overlaps(bombs);
   enemies.overlaps(healths);
@@ -317,6 +324,7 @@ function overlapchecker() {
   bouncer.overlaps(enemies, bouncerdamagetoenemy);
   waterfield.overlapping(enemies, waterfielddamagetoenemy);
   bullets.collides(enemies, bulletdamagetoenemy);
+  swords.collides(enemies, sworddamagetoenemy);
 
   bullets.overlaps(bullets);
   bullets.overlaps(bombs);
@@ -350,6 +358,15 @@ function overlapchecker() {
   waterfield.overlaps(fireballs);
 
   fireballs.overlaps(fireballs);
+
+  swords.overlaps(bullets);
+  swords.overlaps(swords);
+  swords.overlaps(bombs);
+  swords.overlaps(healths);
+  swords.overlaps(rotators);
+  swords.overlaps(bouncer);
+  swords.overlaps(waterfield);
+  swords.overlaps(fireballs);
 }
 
 function timecounter() {
@@ -392,6 +409,12 @@ function bulletdamagetoenemy(weapon, enemy) {
   enemy.life -= BULLETDAMAGE;
   enemykilledupdate(enemy);
   weapon.remove();
+}
+
+function sworddamagetoenemy(weapon, enemy) {
+  enemy.life -= SWORDDAMAGE;
+  enemykilledupdate(enemy);
+  // weapon.remove();
 }
 
 function fireballdamagetoenemy(weapon, enemy) {
@@ -588,16 +611,21 @@ function spawnenemy() {
 }
 
 window.mousePressed = () => {
-    sun.play();
-    sun.setVolume(.2);
+  if (chosebullets) {
     let bullet = new bullets.Sprite(player.x, player.y, 15, 15);
     bullet.moveTowards(mouse.x + player.mouse.x, mouse.y + player.mouse.y);
     bullet.speed = 20;
-    if (facing === "right") {
-      player.ani = "rightattack";
-    } else {
-      player.ani = "leftattack";
-    }
+  } else if (chosesword) {
+    let sworddirection = Math.atan2(player.y - (mouse.y + player.mouse.y), player.x - (mouse.x + player.mouse.x)) * 180 / Math.PI;
+    let sword = new swords.Sprite(player.x, player.y, [60, sworddirection]);
+  }
+  sun.play();
+  sun.setVolume(.2);
+  if (facing === "right") {
+    player.ani = "rightattack";
+  } else {
+    player.ani = "leftattack";
+  }
 };
 
 window.draw = () => {
@@ -770,7 +798,7 @@ window.draw = () => {
     }
   }
   if (time <= 24) {
-    let texttutorial = ["Fight against the shadow warriors who are plotting to attack the Sun.", "Shoot sun orbs with LMB and use your abilities to defeat them.",
+    let texttutorial = ["Fight against the shadow warriors who are plotting to attack the Sun.", "Attach with your LMB and use abilities to defeat them.",
         "Be careful not to get near the shadows.", "Move around with WASD and dodge their necrotic attacks.",
         "As you defeat more shadows, they'll drop sun souls.", "Use these souls to level up and become stronger.",
         "As you collect souls, you'll gain powers.",
