@@ -214,7 +214,7 @@ function resetstats() {
   // experiencepoints = 29;
   level = 0;
   // time = 1;
-  time = 24;
+  time = 25;
   // time = 400;
   PLAYERSPEED = 3.25;
   BULLETDAMAGE = 540;
@@ -327,6 +327,7 @@ function overlapchecker() {
   experience.overlaps(fireballs);
   experience.overlaps(swords);
 
+  enemies.collides(enemies);
   enemies.overlaps(bombs);
   enemies.overlaps(healths);
   fireballs.overlapping(enemies, fireballdamagetoenemy);
@@ -870,9 +871,10 @@ window.draw = () => {
   waterfield.y = player.y;
   // swords.x = player.x + 1 * (mouse.x + player.mouse.x);
   // swords.y = player.y + 1 * (mouse.y + player.mouse.y);
+  // let mousetoplayerangle = Math.atan2(player.y - swords.y, player.x - swords.x) * 180 / Math.PI;
   // let mouseangle = player.angleTo(mouse.x + player.mouse.x, mouse.y + player.mouse.y);
-  // swords.x = player.x + 50 * Math.cos(mouseangle);
-  // swords.y = player.y + 50 * Math.sin(mouseangle);
+  // swords.x = player.x + 100 * Math.cos(mousetoplayerangle);
+  // swords.y = player.y + 100 * Math.sin(mousetoplayerangle);
   swords.x = player.x;
   swords.y = player.y;
   camera.x = player.x;
