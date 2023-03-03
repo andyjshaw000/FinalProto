@@ -1,4 +1,3 @@
-let pausetext;
 let playagained;
 let weaponchosen;
 let chosebullets;
@@ -17,7 +16,6 @@ let level;
 let experiencepoints;
 let enemies;
 let time;
-let framecounter;
 let bullets;
 let swords;
 let bombs;
@@ -134,9 +132,23 @@ window.setup = () => {
 };
 
 function initialize() {
-  // waterfield = new Sprite();
-  // waterfield.visible = false;
-  // had to ungroup, hide it, and make a new sprite to make it under the player
+  let pause = createButton("Pause");
+  pause.style("border-radius", "5px");
+  pause.style("font-size", "12px");
+  pause.style("border", "none");
+  pause.size(50, 20);
+  pause.position(20, windowHeight * 1 / 20 + 10);
+  pause.mousePressed(() => {
+    if (!PAUSED) {
+      pause.html("Play");
+      noLoop();
+      PAUSED = true;
+    } else {
+      pause.html("Pause");
+      loop();
+      PAUSED = false;
+    }
+  });
   player = new Sprite(windowWidth / 2, windowHeight / 2, 20, 40);
   if (!playagained) {
     timecounter();
@@ -189,7 +201,6 @@ function resetstats() {
   chosebullets = false;
   chosesword = false;
   playagained = false;
-  pausetext = "Pause";
   facing = "right";
   PAUSED = false;
   x1 = 0;
@@ -204,8 +215,7 @@ function resetstats() {
   level = 0;
   // time = 1;
   time = 24;
-  // time = 200;
-  framecounter = 0;
+  // time = 600;
   PLAYERSPEED = 3.25;
   BULLETDAMAGE = 540;
   SWORDDAMAGE = 1040;
@@ -254,7 +264,7 @@ function chooseweapon() {
         chosesword = true;
       }
       let buttons = selectAll("button");
-      for (let i = 0; i < buttons.length; i++) {
+      for (let i = 1; i < buttons.length; i++) {
         buttons[i].remove();
       }
       loop();
@@ -579,7 +589,7 @@ function generateleveloptions() {
       waterlevelup.setVolume(.2);
     }
     let buttons = selectAll("button");
-    for (let i = 0; i < buttons.length; i++) {
+    for (let i = 1; i < buttons.length; i++) {
       buttons[i].remove();
     }
     loop();
@@ -672,7 +682,6 @@ window.draw = () => {
       bullets[i].remove();
     }
   }
-  framecounter += 1;
   clear();
   image(bg, x1, y1, windowWidth + 8, windowHeight + 8);
   image(bg, x2, y2, windowWidth + 8, windowHeight + 8);
@@ -702,8 +711,7 @@ window.draw = () => {
   } else if (y2 > windowHeight) {
     y2 = -windowHeight;
   }
-
-  if (framecounter % 150 === 0 && time > 20) {
+  if (frameCount % 150 === 0 && time > 20) {
     for (let i = 0; i < time * Math.pow(windowWidth, 2) / 15000000; i++) {
       if (enemies.length < Math.pow(windowWidth, 2) / 12000) {
         spawnenemy();
@@ -839,8 +847,8 @@ window.draw = () => {
   if (rotatorson) {
     for (let i = 1; i < rotators.length + 1; i++) {
       let spacing = (i * 2 * Math.PI / rotators.length);
-      let circularx = Math.cos(framecounter / 20) * Math.cos((spacing));
-      let circulary = Math.sin(framecounter / 20) * Math.sin((spacing));
+      let circularx = Math.cos(frameCount / 20) * Math.cos((spacing));
+      let circulary = Math.sin(frameCount / 20) * Math.sin((spacing));
       rotators[i - 1].x = player.x + 150 * circularx;
       rotators[i - 1].y = player.y + 150 * circulary;
     }
@@ -861,7 +869,7 @@ window.draw = () => {
   waterfield.y = player.y;
   camera.x = player.x;
   camera.y = player.y;
-  if (fireballon && framecounter % 180 === 0) {
+  if (fireballon && frameCount % 180 === 0) {
     for (let i = 0; i < fireballct; i++) {
       let fireball = new fireballs.Sprite();
       fireball.x = player.x;
@@ -888,23 +896,6 @@ window.draw = () => {
     fireballs.remove();
     time += 1;
   }
-  let pause = createButton(pausetext);
-  pause.style("border-radius", "5px");
-  pause.style("font-size", "12px");
-  pause.style("border", "none");
-  pause.size(50, 20);
-  pause.position(20, windowHeight * 1 / 20 + 10);
-  pause.mousePressed(() => {
-    if (!PAUSED) {
-      pausetext = "Play";
-      noLoop();
-      PAUSED = true;
-    } else {
-      pausetext = "Pause";
-      loop();
-      PAUSED = false;
-    }
-  });
   if (time === 25 && !weaponchosen) {
     redraw();
     selectability.play();
