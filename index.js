@@ -1,4 +1,3 @@
-let pausetext;
 let playagained;
 let weaponchosen;
 let chosebullets;
@@ -17,7 +16,6 @@ let level;
 let experiencepoints;
 let enemies;
 let time;
-let framecounter;
 let bullets;
 let swords;
 let bombs;
@@ -71,8 +69,8 @@ let experienceimage;
 let standleft;
 let standright;
 let facing;
-let rightattack;
-let leftattack;
+// let rightattack;
+// let leftattack;
 let losesound;
 let PAUSED;
 let powerups = {0:["Add a Fireball", "Fireballs burn through enemies dealing massive damage!"], 1:["Add a Stonewall", "Indestructible stones surround you, preventing enemies from getting near you. Enemies hit are permanently slowed."], 2:["Increase Speed", "Move faster to dodge and weave past enemies."], 3:["Increase Health", "More health makes you able to take more damage for longer."], 4:["Increase Defense", "Bolster your armor and take less damage from enemies."], 5:["Power up your Airball", "Enemies won't know when it's coming, but when it does, it's too late."], 6:["Increase Sun Orb Damage", "Shadows try to avoid the sun as much as possible, as it does massive damage."], 7:["Power up your Waterfield", "Surround yourself in an endless whirlpool that slows enemies in the tide."]};
@@ -82,8 +80,8 @@ p5.disableFriendlyErrors = true;
 function preload() {
   standleft = loadAnimation("images/left1.png");
   standright = loadAnimation("images/right1.png");
-  leftattack = loadAnimation("images/leftattack.png");
-  rightattack = loadAnimation("images/rightattack.png");
+  // leftattack = loadAnimation("images/leftattack.png");
+  // rightattack = loadAnimation("images/rightattack.png");
   testimage = loadAnimation("images/right2.png", 3);
   testimage.frameDelay = 12;
   test2image = loadAnimation("images/left2.png", 3);
@@ -134,9 +132,23 @@ window.setup = () => {
 };
 
 function initialize() {
-  // waterfield = new Sprite();
-  // waterfield.visible = false;
-  // had to ungroup, hide it, and make a new sprite to make it under the player
+  let pause = createButton("Pause");
+  pause.style("border-radius", "5px");
+  pause.style("font-size", "12px");
+  pause.style("border", "none");
+  pause.size(50, 20);
+  pause.position(20, windowHeight * 1 / 20 + 10);
+  pause.mousePressed(() => {
+    if (!PAUSED) {
+      pause.html("Play");
+      noLoop();
+      PAUSED = true;
+    } else {
+      pause.html("Pause");
+      loop();
+      PAUSED = false;
+    }
+  });
   player = new Sprite(windowWidth / 2, windowHeight / 2, 20, 40);
   if (!playagained) {
     timecounter();
@@ -168,8 +180,8 @@ function visualinit() {
   enemies.addAnimation("enemyimage", enemyimage);
   enemies.addAnimation("enemyimage2", enemyimage2);
   waterfield.addAnimation("waterimage", waterimage);
-  player.addAnimation("rightattack", rightattack);
-	player.addAnimation("leftattack", leftattack);
+  // player.addAnimation("rightattack", rightattack);
+	// player.addAnimation("leftattack", leftattack);
   player.addAnimation("right", testimage);
 	player.addAnimation("left", test2image);
   player.addAnimation("standright", standright);
@@ -189,7 +201,6 @@ function resetstats() {
   chosebullets = false;
   chosesword = false;
   playagained = false;
-  pausetext = "Pause";
   facing = "right";
   PAUSED = false;
   x1 = 0;
@@ -204,8 +215,7 @@ function resetstats() {
   level = 0;
   // time = 1;
   time = 24;
-  // time = 200;
-  framecounter = 0;
+  // time = 400;
   PLAYERSPEED = 3.25;
   BULLETDAMAGE = 540;
   SWORDDAMAGE = 1040;
@@ -254,7 +264,7 @@ function chooseweapon() {
         chosesword = true;
       }
       let buttons = selectAll("button");
-      for (let i = 0; i < buttons.length; i++) {
+      for (let i = 1; i < buttons.length; i++) {
         buttons[i].remove();
       }
       loop();
@@ -276,7 +286,7 @@ function groupinit() {
 }
 
 function physicsinit() {
-  player.autoCull = false;
+  // allSprites.autoCull = false;
   bombs.diameter = 20;
   rotators.diameter = 60;
   healths.diameter = 30;
@@ -442,7 +452,7 @@ function rotatordamagetoenemy(weapon, enemy) {
 }
 
 function bombdamagetoenemy(weapon, enemy) {
-  enemy.life = 0;
+  enemy.life = -1;
   enemykilledupdate(enemy);
 }
 
@@ -569,8 +579,6 @@ function generateleveloptions() {
       if (!wateron) {
         new waterfield.Sprite();
         waterfield.layer = 1;
-        // WATERFIELDDAMAGE = 4;
-        // waterfield.visible = true;
         wateron = true;
       } else {
         WATERFIELDDAMAGE += .6;
@@ -579,7 +587,7 @@ function generateleveloptions() {
       waterlevelup.setVolume(.2);
     }
     let buttons = selectAll("button");
-    for (let i = 0; i < buttons.length; i++) {
+    for (let i = 1; i < buttons.length; i++) {
       buttons[i].remove();
     }
     loop();
@@ -615,17 +623,26 @@ window.mousePressed = () => {
     let bullet = new bullets.Sprite(player.x, player.y, 15, 15);
     bullet.moveTowards(mouse.x + player.mouse.x, mouse.y + player.mouse.y);
     bullet.speed = 20;
-  } else if (chosesword) {
+  } else if (chosesword && swords.length < 1) {
     let sworddirection = Math.atan2(player.y - (mouse.y + player.mouse.y), player.x - (mouse.x + player.mouse.x)) * 180 / Math.PI;
-    let sword = new swords.Sprite(player.x, player.y, [60, sworddirection]);
+    let sword = new swords.Sprite(player.x, player.y, [220, sworddirection - 40]);
+    // sword.vertices[0][0] = player.x;
+    // sword.vertices[0][1] = player.y;
+    // sword.vertices.set(player.x, player.y, 0);
+    // sword.x = player.x + 50;
+    // sword.y = player.y + 50;
+    sword.rotate(80, 5).then(() => {
+      sword.remove();
+    });
+    // player.text = sword.vertices;
   }
   sun.play();
   sun.setVolume(.2);
-  if (facing === "right") {
-    player.ani = "rightattack";
-  } else {
-    player.ani = "leftattack";
-  }
+  // if (facing === "right") {
+  //   player.ani = "rightattack";
+  // } else {
+  //   player.ani = "leftattack";
+  // }
 };
 
 window.draw = () => {
@@ -672,16 +689,11 @@ window.draw = () => {
       bullets[i].remove();
     }
   }
-  framecounter += 1;
   clear();
   image(bg, x1, y1, windowWidth + 8, windowHeight + 8);
   image(bg, x2, y2, windowWidth + 8, windowHeight + 8);
   image(bg, x1, y2, windowWidth + 8, windowHeight + 8);
   image(bg, x2, y1, windowWidth + 8, windowHeight + 8);
-  if (time > 20) {
-    fill(250, 250, 210, 30);
-    rect(0, 0, windowWidth, windowHeight);
-  }
   if (x1 < -windowWidth){
     x1 = windowWidth;
   } else if (x1 > windowWidth) {
@@ -702,8 +714,7 @@ window.draw = () => {
   } else if (y2 > windowHeight) {
     y2 = -windowHeight;
   }
-
-  if (framecounter % 150 === 0 && time > 20) {
+  if (frameCount % 150 === 0 && time > 20) {
     for (let i = 0; i < time * Math.pow(windowWidth, 2) / 15000000; i++) {
       if (enemies.length < Math.pow(windowWidth, 2) / 12000) {
         spawnenemy();
@@ -811,10 +822,8 @@ window.draw = () => {
     text(texttutorial[Math.floor(time / 3)], windowWidth / 2, 120);
   }
   if (time > 20) {
-    textSize(17);
     textAlign(CENTER);
     stroke(0);
-    strokeWeight(1);
     noFill();
     rect(windowWidth * 3 / 10, windowHeight * 1 / 10, windowWidth * 4 / 10, windowHeight * 1 / 20);
     noStroke();
@@ -839,8 +848,8 @@ window.draw = () => {
   if (rotatorson) {
     for (let i = 1; i < rotators.length + 1; i++) {
       let spacing = (i * 2 * Math.PI / rotators.length);
-      let circularx = Math.cos(framecounter / 20) * Math.cos((spacing));
-      let circulary = Math.sin(framecounter / 20) * Math.sin((spacing));
+      let circularx = Math.cos(frameCount / 20) * Math.cos((spacing));
+      let circulary = Math.sin(frameCount / 20) * Math.sin((spacing));
       rotators[i - 1].x = player.x + 150 * circularx;
       rotators[i - 1].y = player.y + 150 * circulary;
     }
@@ -859,9 +868,16 @@ window.draw = () => {
   }
   waterfield.x = player.x;
   waterfield.y = player.y;
+  // swords.x = player.x + 1 * (mouse.x + player.mouse.x);
+  // swords.y = player.y + 1 * (mouse.y + player.mouse.y);
+  // let mouseangle = player.angleTo(mouse.x + player.mouse.x, mouse.y + player.mouse.y);
+  // swords.x = player.x + 50 * Math.cos(mouseangle);
+  // swords.y = player.y + 50 * Math.sin(mouseangle);
+  swords.x = player.x;
+  swords.y = player.y;
   camera.x = player.x;
   camera.y = player.y;
-  if (fireballon && framecounter % 180 === 0) {
+  if (fireballon && frameCount % 150 === 0) {
     for (let i = 0; i < fireballct; i++) {
       let fireball = new fireballs.Sprite();
       fireball.x = player.x;
@@ -873,38 +889,21 @@ window.draw = () => {
         fireballs[i].remove();
       }
     }
-    if (facing === "right") {
-      player.ani = "rightattack";
-    } else {
-      player.ani = "leftattack";
-    }
+    // if (facing === "right") {
+    //   player.ani = "rightattack";
+    // } else {
+    //   player.ani = "leftattack";
+    // }
   }
-  if (time % 180 === 0) {
-    enemies.remove();
-    experience.remove();
-    bombs.remove();
-    healths.remove();
-    bullets.remove();
-    fireballs.remove();
-    time += 1;
-  }
-  let pause = createButton(pausetext);
-  pause.style("border-radius", "5px");
-  pause.style("font-size", "12px");
-  pause.style("border", "none");
-  pause.size(50, 20);
-  pause.position(20, windowHeight * 1 / 20 + 10);
-  pause.mousePressed(() => {
-    if (!PAUSED) {
-      pausetext = "Play";
-      noLoop();
-      PAUSED = true;
-    } else {
-      pausetext = "Pause";
-      loop();
-      PAUSED = false;
-    }
-  });
+  // if (time % 180 === 0) {
+  //   enemies.remove();
+  //   experience.remove();
+  //   bombs.remove();
+  //   healths.remove();
+  //   bullets.remove();
+  //   fireballs.remove();
+  //   time += 1;
+  // }
   if (time === 25 && !weaponchosen) {
     redraw();
     selectability.play();
