@@ -71,9 +71,11 @@ let standright;
 let facing;
 // let rightattack;
 // let leftattack;
+let pressx;
+let pressy;
 let losesound;
 let PAUSED;
-let powerups = {0:["Add a Fireball", "Fireballs burn through enemies dealing massive damage!"], 1:["Add a Stonewall", "Indestructible stones surround you, preventing enemies from getting near you. Enemies hit are permanently slowed."], 2:["Increase Speed", "Move faster to dodge and weave past enemies."], 3:["Increase Health", "More health makes you able to take more damage for longer."], 4:["Increase Defense", "Bolster your armor and take less damage from enemies."], 5:["Power up your Airball", "Enemies won't know when it's coming, but when it does, it's too late."], 6:["Increase Sun Orb Damage", "Shadows try to avoid the sun as much as possible, as it does massive damage."], 7:["Power up your Waterfield", "Surround yourself in an endless whirlpool that slows enemies in the tide."]};
+let powerups = {0:["Add a Fireball", "Fireballs burn through enemies dealing massive damage!"], 1:["Add a Stonewall", "Indestructible stones surround you, preventing enemies from getting near you. Enemies hit are permanently slowed."], 2:["Increase Speed", "Move faster to dodge and weave past enemies."], 3:["Increase Health", "More health makes you able to take more damage for longer."], 4:["Increase Defense", "Bolster your armor and take less damage from enemies."], 5:["Power up your Airball", "Enemies won't know when it's coming, but when it does, it's too late."], 6:["Increase Sun Damage", "Shadows try to avoid the sun as much as possible, as it does massive damage."], 7:["Power up your Waterfield", "Surround yourself in an endless whirlpool that slows enemies in the tide."]};
 
 p5.disableFriendlyErrors = true;
 
@@ -117,13 +119,10 @@ function preload() {
 }
 // to do:
 // save high score, if they have completed tutorial, maybe upgrade drops that can be equipped
-// add magnet
 // add projectile enemies
-// health bar under player in red box
 // enemy damaged sound
 // add boss levels
 // add sword damage
-// clean up code with cull
 // balance game
 // cleaner visuals
 
@@ -217,7 +216,7 @@ function resetstats() {
   time = 25;
   // time = 400;
   PLAYERSPEED = 3.25;
-  BULLETDAMAGE = 540;
+  BULLETDAMAGE = 840;
   SWORDDAMAGE = 1040;
   rotatorson = false;
   bounceron = false;
@@ -293,6 +292,7 @@ function physicsinit() {
   fireballs.diameter = 80;
 	experience.diameter = 10;
   player.collider = "kinematic";
+  swords.collider = "kinematic";
   player.rotationLock = true;
   bouncer.friction = 0;
   bouncer.x = player.x;
@@ -307,6 +307,7 @@ function physicsinit() {
 function overlapchecker() {
   player.overlaps(experience, experiencecollect);
   enemies.collides(player, damagetoplayer);
+  enemies.colliding(player, damagetoplayer);
   player.overlaps(bullets);
   player.overlaps(bombs, bombcollect);
   player.overlaps(healths, healthcollect);
@@ -574,6 +575,7 @@ function generateleveloptions() {
       airlevelup.setVolume(.25);
     } else if (button.attribute === 6) {
       BULLETDAMAGE += 300;
+      SWORDDAMAGE += 300;
       sunlevelup.play();
       sunlevelup.setVolume(.15);
     } else if (button.attribute === 7) {
@@ -621,21 +623,36 @@ function spawnenemy() {
 
 window.mousePressed = () => {
   if (chosebullets) {
+    pressx = mouse.x + player.mouse.x;
+    pressy = mouse.y + player.mouse.y;
     let bullet = new bullets.Sprite(player.x, player.y, 15, 15);
-    bullet.moveTowards(mouse.x + player.mouse.x, mouse.y + player.mouse.y);
+    bullet.moveTowards(pressx, pressy);
     bullet.speed = 20;
   } else if (chosesword && swords.length < 1) {
-    let sworddirection = Math.atan2(player.y - (mouse.y + player.mouse.y), player.x - (mouse.x + player.mouse.x)) * 180 / Math.PI;
-    let sword = new swords.Sprite(player.x, player.y, [220, sworddirection - 40]);
+    pressx = mouse.x + player.mouse.x;
+    pressy = mouse.y + player.mouse.y;
+    // let sworddirection = Math.atan2(player.y - (mouse.y + player.mouse.y), player.x - (mouse.x + player.mouse.x)) * 180 / Math.PI;
+    // let sword = new swords.Sprite(player.x, player.y, [10, sworddirection - 40]);
+    let sword = new swords.Sprite([[player.x, player.y], [pressx, pressy]]);
+    // oldsword.remove();
+    sword.width = 60;
+    sword.height = 60;
+    sword.rotate(80, 3).then(() => {
+      // sword.width = 20;
+      swords.remove();
+    });
+    // let sword = new swords.Sprite(player.x, player.y, [200, 200])
+    // line(player.x, player.y, mouse.x + player.mouse.x, mouse.y + player.mouse.y);
+    // let sword = new swords.Sprite([[player.x, player.y], [mouse.x + player.mouse.x + 10, mouse.y + player.mouse.y + 10], [mouse.x + player.mouse.x, mouse.y + player.mouse.y], [player.x, player.y]]);
     // sword.vertices[0][0] = player.x;
     // sword.vertices[0][1] = player.y;
     // sword.vertices.set(player.x, player.y, 0);
     // sword.x = player.x + 50;
     // sword.y = player.y + 50;
-    sword.rotate(80, 5).then(() => {
-      sword.remove();
-    });
-    // player.text = sword.vertices;
+    // sword.vertices[0].set([player.x, player.y, 0])
+    // problems: the mouse is incorrect
+    // sword doesnt move with mouse
+    // player.text = sword.position;
   }
   sun.play();
   sun.setVolume(.2);
@@ -867,16 +884,43 @@ window.draw = () => {
       ydirection *= -1;
     }
   }
+  // if (waterfield.length > 0) {
   waterfield.x = player.x;
   waterfield.y = player.y;
+  // if (swords[0]) {
+    // let oldsword = swords[0];
+    // let sword = new swords.Sprite([[player.x, player.y], [pressx, pressy]]);
+    // // oldsword.remove();
+    // sword.width = 60;
+    // sword.height = 60;
+    // sword.rotate(80, 3).then(() => {
+    //   // sword.width = 20;
+    //   swords.remove();
+    // });
+  // }
+  // swords.position = [player.x, player.y, 0];
+  // }
+  // player.text = swords.verticies;
   // swords.x = player.x + 1 * (mouse.x + player.mouse.x);
   // swords.y = player.y + 1 * (mouse.y + player.mouse.y);
   // let mousetoplayerangle = Math.atan2(player.y - swords.y, player.x - swords.x) * 180 / Math.PI;
   // let mouseangle = player.angleTo(mouse.x + player.mouse.x, mouse.y + player.mouse.y);
   // swords.x = player.x + 100 * Math.cos(mousetoplayerangle);
   // swords.y = player.y + 100 * Math.sin(mousetoplayerangle);
-  swords.x = player.x;
-  swords.y = player.y;
+  if (swords[0]) {
+    swords[0].x = player.x;
+    swords[0].y = player.y;
+  }
+  // swords[0].x = player.x;
+  // swords[0].y = player.y;
+  // if (swords.length > 0) {
+  //   swords.position[0] = player.x;
+  //   swords.position[1] = player.y;
+  // }
+  // if (swords[0]) {
+  //   swords.set([player.x, player.y, 0]);
+  // }
+  // line(player.x, player.y, mouse.x + player.mouse.x, mouse.y + player.mouse.y);
   camera.x = player.x;
   camera.y = player.y;
   if (fireballon && frameCount % 150 === 0) {
