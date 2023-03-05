@@ -63,7 +63,10 @@ let waterimage;
 let airimage;
 let earthimage;
 let sunimage;
-let swordimage;
+let swordimageL;
+let swordimageR;
+let swordimageU;
+let swordimageD;
 let bombimage;
 let healthimage;
 let experienceimage;
@@ -95,7 +98,10 @@ function preload() {
   airimage = loadAnimation("images/air.png");
   earthimage = loadAnimation("images/earth.png");
   sunimage = loadAnimation("images/sun.png");
-  swordimage = loadAnimation("images/sword.png");
+  swordimageL = loadAnimation("images/sword2.png");
+  swordimageR = loadAnimation("images/sword.png");
+  swordimageU = loadAnimation("images/sword3.png");
+  swordimageD = loadAnimation("images/sword4.png");
   bombimage = loadAnimation("images/bomb.png");
   healthimage = loadAnimation("images/health.png");
   experienceimage = loadAnimation("images/experience.png");
@@ -189,7 +195,10 @@ function visualinit() {
   rotators.addAnimation("earthimage", earthimage);
   fireballs.addAnimation("fireimage", fireimage);
   bullets.addAnimation("sunimage", sunimage);
-  swords.addAnimation("swordimage", swordimage);
+  swords.addAnimation("swordimageL", swordimageL);
+  swords.addAnimation("swordimageR", swordimageR);
+  swords.addAnimation("swordimageU", swordimageU);
+  swords.addAnimation("swordimageD", swordimageD);
   healths.addAnimation("healthimage", healthimage);
   bombs.addAnimation("bombimage", bombimage);
   experience.addAnimation("experienceimage", experienceimage);
@@ -632,14 +641,28 @@ window.mousePressed = () => {
     sun.play();
     sun.setVolume(.2);
     let sword = new swords.Sprite([[player.x, player.y], [mouse.x + player.mouse.x, mouse.y + player.mouse.y]]);
-    sword.color = "yellow";
-    // swordimage.x = player.x + 20;
-    // swordimage.y = player.y + 20;
-    swordimage.offset.x = 45 * (mouse.x + player.mouse.x) / Math.abs(mouse.x + player.mouse.x);
-    // swordimage.offset.y = 25 * (mouse.y + player.mouse.y) / Math.abs(mouse.y + player.mouse.y);
-    sword.width = 90;
-    sword.height = 90;
-    sword.rotate(80, 3).then(() => {
+    // sword.color = "yellow";
+    if (player.x > mouse.x + player.mouse.x) {
+      if (player.y > mouse.y + player.mouse.y) {
+        swordimageL.offset.x = -45;
+        sword.ani = "swordimageL";
+      } else {
+        swordimageD.offset.y = 45;
+        sword.ani = "swordimageD";
+      }
+    } else {
+      if (player.y > mouse.y + player.mouse.y) {
+        swordimageU.offset.y = -45;
+        sword.ani = "swordimageU";
+      } else {
+        swordimageR.offset.x = 45;
+        sword.ani = "swordimageR";
+      }
+    }
+    // swordimage.offset.x = 45 * (mouse.x + player.mouse.x) / Math.abs(mouse.x + player.mouse.x);
+    sword.width = 70;
+    sword.height = 70;
+    sword.rotate(135, 4.5).then(() => {
       swords.remove();
     });
   }
