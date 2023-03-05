@@ -63,6 +63,7 @@ let waterimage;
 let airimage;
 let earthimage;
 let sunimage;
+let swordimage;
 let bombimage;
 let healthimage;
 let experienceimage;
@@ -94,6 +95,7 @@ function preload() {
   airimage = loadAnimation("images/air.png");
   earthimage = loadAnimation("images/earth.png");
   sunimage = loadAnimation("images/sun.png");
+  swordimage = loadAnimation("images/sword.png");
   bombimage = loadAnimation("images/bomb.png");
   healthimage = loadAnimation("images/health.png");
   experienceimage = loadAnimation("images/experience.png");
@@ -187,7 +189,7 @@ function visualinit() {
   rotators.addAnimation("earthimage", earthimage);
   fireballs.addAnimation("fireimage", fireimage);
   bullets.addAnimation("sunimage", sunimage);
-  // swords.addAnimation("sunimage", sunimage);
+  swords.addAnimation("swordimage", swordimage);
   healths.addAnimation("healthimage", healthimage);
   bombs.addAnimation("bombimage", bombimage);
   experience.addAnimation("experienceimage", experienceimage);
@@ -630,6 +632,11 @@ window.mousePressed = () => {
     sun.play();
     sun.setVolume(.2);
     let sword = new swords.Sprite([[player.x, player.y], [mouse.x + player.mouse.x, mouse.y + player.mouse.y]]);
+    sword.color = "yellow";
+    // swordimage.x = player.x + 20;
+    // swordimage.y = player.y + 20;
+    swordimage.offset.x = 45 * (mouse.x + player.mouse.x) / Math.abs(mouse.x + player.mouse.x);
+    // swordimage.offset.y = 25 * (mouse.y + player.mouse.y) / Math.abs(mouse.y + player.mouse.y);
     sword.width = 90;
     sword.height = 90;
     sword.rotate(80, 3).then(() => {
