@@ -71,8 +71,6 @@ let standright;
 let facing;
 // let rightattack;
 // let leftattack;
-let pressx;
-let pressy;
 let losesound;
 let PAUSED;
 let powerups = {0:["Add a Fireball", "Fireballs burn through enemies dealing massive damage!"], 1:["Add a Stonewall", "Indestructible stones surround you, preventing enemies from getting near you. Enemies hit are permanently slowed."], 2:["Increase Speed", "Move faster to dodge and weave past enemies."], 3:["Increase Health", "More health makes you able to take more damage for longer."], 4:["Increase Defense", "Bolster your armor and take less damage from enemies."], 5:["Power up your Airball", "Enemies won't know when it's coming, but when it does, it's too late."], 6:["Increase Sun Damage", "Shadows try to avoid the sun as much as possible, as it does massive damage."], 7:["Power up your Waterfield", "Surround yourself in an endless whirlpool that slows enemies in the tide."]};
@@ -623,39 +621,21 @@ function spawnenemy() {
 
 window.mousePressed = () => {
   if (chosebullets) {
-    pressx = mouse.x + player.mouse.x;
-    pressy = mouse.y + player.mouse.y;
+    sun.play();
+    sun.setVolume(.2);
     let bullet = new bullets.Sprite(player.x, player.y, 15, 15);
-    bullet.moveTowards(pressx, pressy);
+    bullet.moveTowards(mouse.x + player.mouse.x, mouse.y + player.mouse.y);
     bullet.speed = 20;
   } else if (chosesword && swords.length < 1) {
-    pressx = mouse.x + player.mouse.x;
-    pressy = mouse.y + player.mouse.y;
-    // let sworddirection = Math.atan2(player.y - (mouse.y + player.mouse.y), player.x - (mouse.x + player.mouse.x)) * 180 / Math.PI;
-    // let sword = new swords.Sprite(player.x, player.y, [10, sworddirection - 40]);
-    let sword = new swords.Sprite([[player.x, player.y], [pressx, pressy]]);
-    // oldsword.remove();
-    sword.width = 60;
-    sword.height = 60;
+    sun.play();
+    sun.setVolume(.2);
+    let sword = new swords.Sprite([[player.x, player.y], [mouse.x + player.mouse.x, mouse.y + player.mouse.y]]);
+    sword.width = 90;
+    sword.height = 90;
     sword.rotate(80, 3).then(() => {
-      // sword.width = 20;
       swords.remove();
     });
-    // let sword = new swords.Sprite(player.x, player.y, [200, 200])
-    // line(player.x, player.y, mouse.x + player.mouse.x, mouse.y + player.mouse.y);
-    // let sword = new swords.Sprite([[player.x, player.y], [mouse.x + player.mouse.x + 10, mouse.y + player.mouse.y + 10], [mouse.x + player.mouse.x, mouse.y + player.mouse.y], [player.x, player.y]]);
-    // sword.vertices[0][0] = player.x;
-    // sword.vertices[0][1] = player.y;
-    // sword.vertices.set(player.x, player.y, 0);
-    // sword.x = player.x + 50;
-    // sword.y = player.y + 50;
-    // sword.vertices[0].set([player.x, player.y, 0])
-    // problems: the mouse is incorrect
-    // sword doesnt move with mouse
-    // player.text = sword.position;
   }
-  sun.play();
-  sun.setVolume(.2);
   // if (facing === "right") {
   //   player.ani = "rightattack";
   // } else {
