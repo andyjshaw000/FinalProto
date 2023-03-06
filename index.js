@@ -63,6 +63,10 @@ let waterimage;
 let airimage;
 let earthimage;
 let sunimage;
+let swordimageL;
+let swordimageR;
+let swordimageU;
+let swordimageD;
 let bombimage;
 let healthimage;
 let experienceimage;
@@ -71,9 +75,10 @@ let standright;
 let facing;
 // let rightattack;
 // let leftattack;
+let timerid;
 let losesound;
 let PAUSED;
-let powerups = {0:["Add a Fireball", "Fireballs burn through enemies dealing massive damage!"], 1:["Add a Stonewall", "Indestructible stones surround you, preventing enemies from getting near you. Enemies hit are permanently slowed."], 2:["Increase Speed", "Move faster to dodge and weave past enemies."], 3:["Increase Health", "More health makes you able to take more damage for longer."], 4:["Increase Defense", "Bolster your armor and take less damage from enemies."], 5:["Power up your Airball", "Enemies won't know when it's coming, but when it does, it's too late."], 6:["Increase Sun Orb Damage", "Shadows try to avoid the sun as much as possible, as it does massive damage."], 7:["Power up your Waterfield", "Surround yourself in an endless whirlpool that slows enemies in the tide."]};
+let powerups = {0:["Add a Fireball", "Fireballs burn through enemies dealing massive damage!"], 1:["Add a Stonewall", "Indestructible stones surround you, preventing enemies from getting near you. Enemies hit are permanently slowed."], 2:["Increase Speed", "Move faster to dodge and weave past enemies."], 3:["Increase Health", "More health makes you able to take more damage for longer."], 4:["Increase Defense", "Bolster your armor and take less damage from enemies."], 5:["Power up your Airball", "Enemies won't know when it's coming, but when it does, it's too late."], 6:["Increase Sun Damage", "Shadows try to avoid the sun as much as possible, as it does massive damage."], 7:["Power up your Waterfield", "Surround yourself in an endless whirlpool that slows enemies in the tide."]};
 
 p5.disableFriendlyErrors = true;
 
@@ -94,6 +99,10 @@ function preload() {
   airimage = loadAnimation("images/air.png");
   earthimage = loadAnimation("images/earth.png");
   sunimage = loadAnimation("images/sun.png");
+  swordimageL = loadAnimation("images/sword2.png");
+  swordimageR = loadAnimation("images/sword.png");
+  swordimageU = loadAnimation("images/sword3.png");
+  swordimageD = loadAnimation("images/sword4.png");
   bombimage = loadAnimation("images/bomb.png");
   healthimage = loadAnimation("images/health.png");
   experienceimage = loadAnimation("images/experience.png");
@@ -117,14 +126,9 @@ function preload() {
 }
 // to do:
 // save high score, if they have completed tutorial, maybe upgrade drops that can be equipped
-// add magnet
 // add projectile enemies
-// health bar under player in red box
 // enemy damaged sound
 // add boss levels
-// add sword damage
-// clean up code with cull
-// balance game
 // cleaner visuals
 
 window.setup = () => {
@@ -142,9 +146,11 @@ function initialize() {
     if (!PAUSED) {
       pause.html("Play");
       noLoop();
+      clearInterval(timerid);
       PAUSED = true;
     } else {
       pause.html("Pause");
+      timecounter();
       loop();
       PAUSED = false;
     }
@@ -190,7 +196,10 @@ function visualinit() {
   rotators.addAnimation("earthimage", earthimage);
   fireballs.addAnimation("fireimage", fireimage);
   bullets.addAnimation("sunimage", sunimage);
-  // swords.addAnimation("sunimage", sunimage);
+  swords.addAnimation("swordimageL", swordimageL);
+  swords.addAnimation("swordimageR", swordimageR);
+  swords.addAnimation("swordimageU", swordimageU);
+  swords.addAnimation("swordimageD", swordimageD);
   healths.addAnimation("healthimage", healthimage);
   bombs.addAnimation("bombimage", bombimage);
   experience.addAnimation("experienceimage", experienceimage);
@@ -208,16 +217,18 @@ function resetstats() {
   x2 = windowWidth;
   y2 = windowHeight;
   playerhealth = 100;
+  // playerhealth = 100000;
   PLAYERMAXHEALTH = 100;
+  // PLAYERMAXHEALTH = 100000;
   score = 0;
-  experiencepoints = 10;
-  // experiencepoints = 29;
+  // experiencepoints = 10;
+  experiencepoints = 29;
   level = 0;
   // time = 1;
   time = 25;
-  // time = 400;
+  // time = 600;
   PLAYERSPEED = 3.25;
-  BULLETDAMAGE = 540;
+  BULLETDAMAGE = 840;
   SWORDDAMAGE = 1040;
   rotatorson = false;
   bounceron = false;
@@ -229,9 +240,9 @@ function resetstats() {
   RESISTANCE = 1;
   FIREBALLDAMAGE = 320;
   WATERFIELDDAMAGE = 4;
-  BOUNCERDAMAGE = 1250;
-  ROTATORDAMAGE = 550;
-  BOUNCESPEED = 14;
+  BOUNCERDAMAGE = 1450;
+  ROTATORDAMAGE = 520;
+  BOUNCESPEED = 15;
 }
 
 function chooseweapon() {
@@ -256,6 +267,7 @@ function chooseweapon() {
     button.position(i * windowWidth / 3 + 3 * windowWidth / 26 + windowWidth / 6, 4 * windowHeight / 5 - 20);
     button.attribute = options[i];
     noLoop();
+    clearInterval(timerid);
     button.mousePressed(() => {
       weaponchosen = true;
       if (button.attribute === "Select Sun Orb") {
@@ -267,6 +279,7 @@ function chooseweapon() {
       for (let i = 1; i < buttons.length; i++) {
         buttons[i].remove();
       }
+      timecounter();
       loop();
     });
   }
@@ -287,26 +300,28 @@ function groupinit() {
 
 function physicsinit() {
   // allSprites.autoCull = false;
-  bombs.diameter = 20;
-  rotators.diameter = 60;
-  healths.diameter = 30;
-  fireballs.diameter = 80;
-	experience.diameter = 10;
+  // bombs.diameter = 20;
+  // rotators.diameter = 60;
+  // healths.diameter = 30;
+  // fireballs.diameter = 80;
+	// experience.diameter = 10;
   player.collider = "kinematic";
+  swords.collider = "kinematic";
   player.rotationLock = true;
   bouncer.friction = 0;
   bouncer.x = player.x;
   bouncer.y = player.y;
-  bouncer.diameter = 55;
-  waterfield.diameter = 180;
-  enemies.width = 15;
-  enemies.height = 30;
+  // bouncer.diameter = 55;
+  // waterfield.diameter = 180;
+  // enemies.width = 15;
+  // enemies.height = 30;
   enemies.rotationLock = true;
 }
 
 function overlapchecker() {
   player.overlaps(experience, experiencecollect);
   enemies.collides(player, damagetoplayer);
+  enemies.colliding(player, damagetoplayer);
   player.overlaps(bullets);
   player.overlaps(bombs, bombcollect);
   player.overlaps(healths, healthcollect);
@@ -381,7 +396,7 @@ function overlapchecker() {
 }
 
 function timecounter() {
-  setInterval(function() {
+  timerid = setInterval(function() {
     time += 1;
   }, 1000);
 }
@@ -425,7 +440,6 @@ function bulletdamagetoenemy(weapon, enemy) {
 function sworddamagetoenemy(weapon, enemy) {
   enemy.life -= SWORDDAMAGE;
   enemykilledupdate(enemy);
-  // weapon.remove();
 }
 
 function fireballdamagetoenemy(weapon, enemy) {
@@ -533,6 +547,7 @@ function generateleveloptions() {
     button.position(i * windowWidth / 3 + 3 * windowWidth / 26, 4 * windowHeight / 5 - 20);
     button.attribute = options[i];
     noLoop();
+    clearInterval(timerid);
     button.mousePressed(() => {
     if (button.attribute === 0) {
       if (!fireballon) {
@@ -574,6 +589,7 @@ function generateleveloptions() {
       airlevelup.setVolume(.25);
     } else if (button.attribute === 6) {
       BULLETDAMAGE += 300;
+      SWORDDAMAGE += 350;
       sunlevelup.play();
       sunlevelup.setVolume(.15);
     } else if (button.attribute === 7) {
@@ -591,6 +607,7 @@ function generateleveloptions() {
     for (let i = 1; i < buttons.length; i++) {
       buttons[i].remove();
     }
+    timecounter();
     loop();
   });
 
@@ -621,34 +638,48 @@ function spawnenemy() {
 
 window.mousePressed = () => {
   if (chosebullets) {
+    sun.play();
+    sun.setVolume(.2);
     let bullet = new bullets.Sprite(player.x, player.y, 15, 15);
     bullet.moveTowards(mouse.x + player.mouse.x, mouse.y + player.mouse.y);
     bullet.speed = 20;
   } else if (chosesword && swords.length < 1) {
-    let sworddirection = Math.atan2(player.y - (mouse.y + player.mouse.y), player.x - (mouse.x + player.mouse.x)) * 180 / Math.PI;
-    let sword = new swords.Sprite(player.x, player.y, [220, sworddirection - 40]);
-    // sword.vertices[0][0] = player.x;
-    // sword.vertices[0][1] = player.y;
-    // sword.vertices.set(player.x, player.y, 0);
-    // sword.x = player.x + 50;
-    // sword.y = player.y + 50;
-    sword.rotate(80, 5).then(() => {
-      sword.remove();
+    sun.play();
+    sun.setVolume(.2);
+    let sword = new swords.Sprite([[player.x, player.y], [mouse.x + player.mouse.x, mouse.y + player.mouse.y]]);
+    if (player.x > mouse.x + player.mouse.x) {
+      if (player.y > mouse.y + player.mouse.y) {
+        swordimageL.offset.x = -45;
+        swordimageL.offset.y = -45;
+        sword.ani = "swordimageL";
+      } else {
+        swordimageD.offset.x = -45;
+        swordimageD.offset.y = 45;
+        sword.ani = "swordimageD";
+      }
+    } else {
+      if (player.y > mouse.y + player.mouse.y) {
+        swordimageU.offset.x = 45;
+        swordimageU.offset.y = -45;
+        sword.ani = "swordimageU";
+      } else {
+        swordimageR.offset.x = 45;
+        swordimageR.offset.y = 45;
+        sword.ani = "swordimageR";
+      }
+    }
+    sword.width = 75;
+    sword.height = 75;
+    sword.rotate(90, 3.75).then(() => {
+      swords.remove();
     });
-    // player.text = sword.vertices;
   }
-  sun.play();
-  sun.setVolume(.2);
-  // if (facing === "right") {
-  //   player.ani = "rightattack";
-  // } else {
-  //   player.ani = "leftattack";
-  // }
 };
 
 window.draw = () => {
   if (Math.floor(playerhealth) <= 0) {
     noLoop();
+    clearInterval(timerid);
     backgroundsounds.stop();
     losesound.play();
     losesound.setVolume(.3);
@@ -729,7 +760,7 @@ window.draw = () => {
     }
     let enemydirection = Math.atan2(player.y - enemies[i].y, player.x - enemies[i].x) * 180 / Math.PI;
     enemies[i].direction = enemydirection;
-    enemies[i].speed = 2.5 + time / 300;
+    enemies[i].speed = 2.5 + time / 250;
     if (enemies[i].x < player.x) {
       enemies[i].ani = "enemyimage2";
     } else {
@@ -867,16 +898,14 @@ window.draw = () => {
       ydirection *= -1;
     }
   }
-  waterfield.x = player.x;
-  waterfield.y = player.y;
-  // swords.x = player.x + 1 * (mouse.x + player.mouse.x);
-  // swords.y = player.y + 1 * (mouse.y + player.mouse.y);
-  // let mousetoplayerangle = Math.atan2(player.y - swords.y, player.x - swords.x) * 180 / Math.PI;
-  // let mouseangle = player.angleTo(mouse.x + player.mouse.x, mouse.y + player.mouse.y);
-  // swords.x = player.x + 100 * Math.cos(mousetoplayerangle);
-  // swords.y = player.y + 100 * Math.sin(mousetoplayerangle);
-  swords.x = player.x;
-  swords.y = player.y;
+  if (wateron) {
+    waterfield.x = player.x;
+    waterfield.y = player.y;
+  }
+  if (swords[0]) {
+    swords[0].x = player.x;
+    swords[0].y = player.y;
+  }
   camera.x = player.x;
   camera.y = player.y;
   if (fireballon && frameCount % 150 === 0) {
