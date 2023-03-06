@@ -200,9 +200,17 @@ function visualInit() {
   fireballs.addAnimation("fireimage", fireimage);
   orbs.addAnimation("sunimage", sunimage);
   swords.addAnimation("swordimageL", swordimageL);
+  swordimageL.offset.x = -45;
+  swordimageL.offset.y = -45;
   swords.addAnimation("swordimageR", swordimageR);
+  swordimageR.offset.x = 45;
+  swordimageR.offset.y = 45;
   swords.addAnimation("swordimageU", swordimageU);
+  swordimageU.offset.x = 45;
+  swordimageU.offset.y = -45;
   swords.addAnimation("swordimageD", swordimageD);
+  swordimageD.offset.x = -45;
+  swordimageD.offset.y = 45;
   healths.addAnimation("healthimage", healthimage);
   bombs.addAnimation("bombimage", bombimage);
   experience.addAnimation("experienceimage", experienceimage);
@@ -226,8 +234,8 @@ function resetStats() {
   SCORE = 0;
   EXPPOINTS = 10;
   // EXPPOINTS = 29;
-  LVL = 0;
-  time = 1;
+  LVL = 1;
+  time = 19;
   // time = 25;
   // time = 600;
   PLAYERSPEED = 3.25;
@@ -654,28 +662,21 @@ window.mousePressed = () => {
     let sword = new swords.Sprite([[PLAYER.x, PLAYER.y], [mouse.x + PLAYER.mouse.x, mouse.y + PLAYER.mouse.y]]);
     if (PLAYER.x > mouse.x + PLAYER.mouse.x) {
       if (PLAYER.y > mouse.y + PLAYER.mouse.y) {
-        swordimageL.offset.x = -45;
-        swordimageL.offset.y = -45;
+        // offset can be done preload
         sword.ani = "swordimageL";
       } else {
-        swordimageD.offset.x = -45;
-        swordimageD.offset.y = 45;
         sword.ani = "swordimageD";
       }
     } else {
       if (PLAYER.y > mouse.y + PLAYER.mouse.y) {
-        swordimageU.offset.x = 45;
-        swordimageU.offset.y = -45;
         sword.ani = "swordimageU";
       } else {
-        swordimageR.offset.x = 45;
-        swordimageR.offset.y = 45;
         sword.ani = "swordimageR";
       }
     }
-    sword.width = 75;
-    sword.height = 75;
-    sword.rotate(90, 4.15).then(() => {
+    sword.width = 80;
+    sword.height = 80;
+    sword.rotate(90, 4.6).then(() => {
       swords.remove();
     });
   }
@@ -852,11 +853,9 @@ window.draw = () => {
         "As you collect souls, you'll gain powers.",
         "Help save the Sun from danger. Good luck!"];
     fill("white");
-    stroke(50);
-    strokeWeight(1.5);
-    textSize(30);
+    textSize(windowWidth / 50);
     textAlign(CENTER);
-    text(texttutorial[Math.floor(time / 3)], windowWidth / 2, 150);
+    text(texttutorial[Math.floor(time / 3)], windowWidth / 2, windowHeight * 5 / 20);
   }
   textAlign(CENTER);
   stroke(0);
@@ -869,7 +868,7 @@ window.draw = () => {
   textFont("Courier New");
   stroke(55, 55, 55);
   strokeWeight(2);
-  textSize(18);
+  textSize(windowWidth / 80);
   text("Score: " + SCORE, windowWidth - 140, windowHeight * 1 / 20);
   let minutes = Math.floor(time / 60);
   let extraSeconds = time % 60;
@@ -878,9 +877,9 @@ window.draw = () => {
   text("Time: " + minutes + ":" + extraSeconds, 80, windowHeight * 1 / 20);
   text("LMB: Attack", 80, windowHeight * 19 / 20);
   text("Health: " + Math.floor(PLAYERHEALTH) + "/" + PLAYERMAXHEALTH, windowWidth * 10 / 13, windowHeight * 2 / 15);
-  textSize(22);
+  textSize(windowWidth / 60);
   textFont("Arial");
-  text("LVL: " + Math.floor(LVL), windowWidth / 2, windowHeight * 1 / 11);
+  text("Level: " + Math.floor(LVL), windowWidth / 2, windowHeight * 1 / 11);
   if (rotatorson) {
     for (let i = 1; i < rotators.length + 1; i++) {
       let spacing = (i * 2 * Math.PI / rotators.length);
