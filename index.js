@@ -148,10 +148,12 @@ function initialize() {
       noLoop();
       clearInterval(timerid);
       PAUSED = true;
+      backgroundsounds.setVolume(.002);
     } else {
       pause.html("Pause");
       timecounter();
       loop();
+      backgroundsounds.setVolume(.012);
       PAUSED = false;
     }
   });
@@ -178,7 +180,7 @@ function initialize() {
 function backgroundmusic() {
   backgroundsounds.play();
   backgroundsounds.loop();
-  backgroundsounds.setVolume(.02);
+  backgroundsounds.setVolume(.012);
   userStartAudio();
 }
 
@@ -221,11 +223,11 @@ function resetstats() {
   PLAYERMAXHEALTH = 100;
   // PLAYERMAXHEALTH = 100000;
   score = 0;
-  // experiencepoints = 10;
-  experiencepoints = 29;
+  experiencepoints = 10;
+  // experiencepoints = 29;
   level = 0;
-  // time = 1;
-  time = 25;
+  time = 1;
+  // time = 25;
   // time = 600;
   PLAYERSPEED = 3.25;
   BULLETDAMAGE = 840;
@@ -308,7 +310,7 @@ function physicsinit() {
   player.collider = "kinematic";
   swords.collider = "kinematic";
   player.rotationLock = true;
-  bouncer.friction = 0;
+  // bouncer.friction = 0;
   bouncer.x = player.x;
   bouncer.y = player.y;
   // bouncer.diameter = 55;
@@ -469,6 +471,8 @@ function rotatordamagetoenemy(weapon, enemy) {
 function bombdamagetoenemy(weapon, enemy) {
   enemy.life = -1;
   enemykilledupdate(enemy);
+  // fill(10, 10, 10, 25);
+  // rect(0, 0, windowWidth, windowHeight);
 }
 
 function enemykilledupdate(enemy) {
@@ -709,7 +713,7 @@ window.draw = () => {
       clear();
       losesound.stop();
       initialize();
-      time = 25;
+      time = 20;
       loop();
       buttonback.remove();
       div.remove();
@@ -726,6 +730,7 @@ window.draw = () => {
   image(bg, x2, y2, windowWidth + 8, windowHeight + 8);
   image(bg, x1, y2, windowWidth + 8, windowHeight + 8);
   image(bg, x2, y1, windowWidth + 8, windowHeight + 8);
+  // image(fireimage, 0, 10, 20, 50);
   if (x1 < -windowWidth){
     x1 = windowWidth;
   } else if (x1 > windowWidth) {
@@ -746,7 +751,7 @@ window.draw = () => {
   } else if (y2 > windowHeight) {
     y2 = -windowHeight;
   }
-  if (frameCount % 150 === 0 && time > 20) {
+  if (frameCount % 200 === 0 && time > 20) {
     for (let i = 0; i < time * Math.pow(windowWidth, 2) / 15000000; i++) {
       if (enemies.length < Math.pow(windowWidth, 2) / 12000) {
         spawnenemy();
@@ -770,17 +775,16 @@ window.draw = () => {
     if (enemies[i].drag === -1) {
       enemies[i].speed = .25 * (2.5 + time / 300);
       enemies[i].drag = 0;
-    }
-    if (enemies[i].drag === -2) {
+    } else if (enemies[i].drag === -2) {
       enemies[i].speed = .75 * (2.5 + time / 300);
     }
   }
-  for (let i = 0; i < experience.length; i++) {
-    if (experience[i].life <= 99997300) {
-      experience[i].remove();
-      experiencepoints += 1;
-    }
-  }
+  // for (let i = 0; i < experience.length; i++) {
+  //   if (experience[i].life <= 99997300) {
+  //     experience[i].remove();
+  //     experiencepoints += 1;
+  //   }
+  // }
   if (kb.pressing("down") && kb.pressing("left")) {
     player.ani = "left";
     facing = "left";
@@ -841,7 +845,7 @@ window.draw = () => {
     }
   }
   if (time <= 24) {
-    let texttutorial = ["Fight against the shadow warriors who are plotting to attack the Sun.", "Attach with your LMB and use abilities to defeat them.",
+    let texttutorial = ["Fight against the shadow warriors who are plotting to attack the Sun.", "Attack with your LMB and use abilities to defeat them.",
         "Be careful not to get near the shadows.", "Move around with WASD and dodge their necrotic attacks.",
         "As you defeat more shadows, they'll drop sun souls.", "Use these souls to level up and become stronger.",
         "As you collect souls, you'll gain powers.",
@@ -851,32 +855,30 @@ window.draw = () => {
     strokeWeight(1.5);
     textSize(30);
     textAlign(CENTER);
-    text(texttutorial[Math.floor(time / 3)], windowWidth / 2, 120);
+    text(texttutorial[Math.floor(time / 3)], windowWidth / 2, 150);
   }
-  if (time > 20) {
-    textAlign(CENTER);
-    stroke(0);
-    noFill();
-    rect(windowWidth * 3 / 10, windowHeight * 1 / 10, windowWidth * 4 / 10, windowHeight * 1 / 20);
-    noStroke();
-    fill("green");
-    rect(windowWidth * 3 / 10, windowHeight * 1 / 10, map(level- Math.floor(level), 0, 1, 0, windowWidth * 4 / 10), windowHeight * 1 / 20);
-    fill("black");
-    textFont("Courier New");
-    stroke(215, 215, 215);
-    strokeWeight(2);
-    textSize(18);
-    text("Score: " + score, windowWidth - 140, windowHeight * 1 / 20);
-    let minutes = Math.floor(time / 60);
-    let extraSeconds = time % 60;
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    extraSeconds = extraSeconds < 10 ? "0" + extraSeconds : extraSeconds;
-    text("Time: " + minutes + ":" + extraSeconds, 0 + 80, windowHeight * 1 / 20);
-    text("Health: " + Math.floor(playerhealth) + "/" + PLAYERMAXHEALTH, windowWidth * 10 / 13, windowHeight * 2 / 15);
-    textSize(22);
-    textFont("Arial");
-    text("Level: " + Math.floor(level), windowWidth / 2, windowHeight * 1 / 11);
-  }
+  textAlign(CENTER);
+  stroke(0);
+  noFill();
+  rect(windowWidth * 3 / 10, windowHeight * 1 / 10, windowWidth * 4 / 10, windowHeight * 1 / 20);
+  noStroke();
+  fill("green");
+  rect(windowWidth * 3 / 10, windowHeight * 1 / 10, map(level- Math.floor(level), 0, 1, 0, windowWidth * 4 / 10), windowHeight * 1 / 20);
+  fill("white");
+  textFont("Courier New");
+  stroke(55, 55, 55);
+  strokeWeight(2);
+  textSize(18);
+  text("Score: " + score, windowWidth - 140, windowHeight * 1 / 20);
+  let minutes = Math.floor(time / 60);
+  let extraSeconds = time % 60;
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  extraSeconds = extraSeconds < 10 ? "0" + extraSeconds : extraSeconds;
+  text("Time: " + minutes + ":" + extraSeconds, 0 + 80, windowHeight * 1 / 20);
+  text("Health: " + Math.floor(playerhealth) + "/" + PLAYERMAXHEALTH, windowWidth * 10 / 13, windowHeight * 2 / 15);
+  textSize(22);
+  textFont("Arial");
+  text("Level: " + Math.floor(level), windowWidth / 2, windowHeight * 1 / 11);
   if (rotatorson) {
     for (let i = 1; i < rotators.length + 1; i++) {
       let spacing = (i * 2 * Math.PI / rotators.length);
@@ -935,7 +937,7 @@ window.draw = () => {
   //   fireballs.remove();
   //   time += 1;
   // }
-  if (time === 25 && !weaponchosen) {
+  if (time > 20 && !weaponchosen) {
     redraw();
     selectability.play();
     selectability.setVolume(.1);
