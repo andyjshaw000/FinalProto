@@ -125,11 +125,12 @@ function preload() {
   sunlevelup = loadSound("music/sun");
 }
 // to do:
-// save high score, if they have completed tutorial, maybe upgrade drops that can be equipped
+// save high score, if they have completed tutorial
 // add projectile enemies
 // enemy damaged sound
 // add boss levels
-// cleaner visuals
+// cleaner visuals (powerups and level in bottom right)
+// camelcase function, uppercase globals, hannah's suggestion
 
 window.setup = () => {
   initialize();
