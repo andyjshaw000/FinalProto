@@ -131,6 +131,7 @@ function preload() {
 // add sword damage
 // balance game
 // cleaner visuals
+// add collision width to sword
 
 window.setup = () => {
   initialize();
@@ -216,14 +217,16 @@ function resetstats() {
   x2 = windowWidth;
   y2 = windowHeight;
   playerhealth = 100;
+  // playerhealth = 100000;
   PLAYERMAXHEALTH = 100;
+  // PLAYERMAXHEALTH = 100000;
   score = 0;
   experiencepoints = 10;
   // experiencepoints = 29;
   level = 0;
   // time = 1;
   time = 25;
-  // time = 400;
+  // time = 600;
   PLAYERSPEED = 3.25;
   BULLETDAMAGE = 840;
   SWORDDAMAGE = 1040;
@@ -641,36 +644,33 @@ window.mousePressed = () => {
     sun.play();
     sun.setVolume(.2);
     let sword = new swords.Sprite([[player.x, player.y], [mouse.x + player.mouse.x, mouse.y + player.mouse.y]]);
-    // sword.color = "yellow";
     if (player.x > mouse.x + player.mouse.x) {
       if (player.y > mouse.y + player.mouse.y) {
         swordimageL.offset.x = -45;
+        swordimageL.offset.y = -45;
         sword.ani = "swordimageL";
       } else {
+        swordimageD.offset.x = -45;
         swordimageD.offset.y = 45;
         sword.ani = "swordimageD";
       }
     } else {
       if (player.y > mouse.y + player.mouse.y) {
+        swordimageU.offset.x = 45;
         swordimageU.offset.y = -45;
         sword.ani = "swordimageU";
       } else {
         swordimageR.offset.x = 45;
+        swordimageR.offset.y = 45;
         sword.ani = "swordimageR";
       }
     }
-    // swordimage.offset.x = 45 * (mouse.x + player.mouse.x) / Math.abs(mouse.x + player.mouse.x);
-    sword.width = 70;
-    sword.height = 70;
-    sword.rotate(135, 4.5).then(() => {
+    sword.width = 75;
+    sword.height = 75;
+    sword.rotate(90, 3.75).then(() => {
       swords.remove();
     });
   }
-  // if (facing === "right") {
-  //   player.ani = "rightattack";
-  // } else {
-  //   player.ani = "leftattack";
-  // }
 };
 
 window.draw = () => {
@@ -756,7 +756,7 @@ window.draw = () => {
     }
     let enemydirection = Math.atan2(player.y - enemies[i].y, player.x - enemies[i].x) * 180 / Math.PI;
     enemies[i].direction = enemydirection;
-    enemies[i].speed = 2.5 + time / 300;
+    enemies[i].speed = 2.5 + time / 250;
     if (enemies[i].x < player.x) {
       enemies[i].ani = "enemyimage2";
     } else {
