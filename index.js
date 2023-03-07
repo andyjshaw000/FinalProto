@@ -4,6 +4,7 @@ let CHOSEORBS;
 let CHOSESWORD;
 let SWORDDAMAGE;
 let BG;
+let MOUSEIMG;
 let x1;
 let y1;
 let x2;
@@ -176,6 +177,7 @@ function initialize() {
   backgroundmusic();
   let imagenumber = Math.ceil(Math.random() * 4);
   BG = loadImage("images/" + imagenumber + "-min.jpg");
+  MOUSEIMG = loadImage("images/mouse.png");
   // BG.resize(windowWidth, windowHeight);
 }
 
@@ -726,6 +728,7 @@ window.draw = () => {
   }
   clear();
   // BG.resize(windowWidth, windowHeight);
+  // image(MOUSEIMG, 20, windowHeight - 20, 100, 100);
   image(BG, x1, y1, windowWidth + 8, windowHeight + 8);
   // image(BG, x1, y1, windowWidth + 1, windowHeight + 1);
   // image(BG, x2, y1, windowWidth + 1, windowHeight + 1);
@@ -734,6 +737,7 @@ window.draw = () => {
   image(BG, x2, y2, windowWidth + 8, windowHeight + 8);
   image(BG, x1, y2, windowWidth + 8, windowHeight + 8);
   image(BG, x2, y1, windowWidth + 8, windowHeight + 8);
+  image(MOUSEIMG, 15, 18.25 * windowHeight / 20, 35, 35);
   // image(FIREIMG, 0, 10, 20, 50);
   // andy: figure out the weird random pausing when upgrading
   fill(65, 65, 65, TIME / 1.5 - PLAYERHEALTH * 2);
@@ -875,7 +879,7 @@ window.draw = () => {
   minutes = minutes < 10 ? "0" + minutes : minutes;
   extraSeconds = extraSeconds < 10 ? "0" + extraSeconds : extraSeconds;
   text("Time: " + minutes + ":" + extraSeconds, 80, windowHeight / 20);
-  text("LMB: Attack", 80, windowHeight * 19 / 20);
+  text("   : Attack", 80, windowHeight * 19 / 20);
   text("Health: " + Math.floor(PLAYERHEALTH) + "/" + PLAYERMAXHEALTH, windowWidth * 10 / 13, windowHeight * 2 / 15);
   textSize(windowWidth / 60);
   textFont("Arial");
