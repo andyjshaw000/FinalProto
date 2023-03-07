@@ -833,7 +833,7 @@ window.draw = () => {
       PLAYER.ani = "PLAYERSTANDLEFTIMG";
     }
   }
-  if (TIME <= 24) {
+  if (TIME <= 32) {
     let texttutorial = ["Fight against the shadow warriors who are plotting to attack the Sun.", "Attack with your LMB and use abilities to defeat them.",
         "Be careful not to get near the shadows.", "Move around with WASD and dodge their necrotic attacks.",
         "As you defeat more shadows, they'll drop sun souls.", "Use these souls to level up and become stronger.",
@@ -842,7 +842,7 @@ window.draw = () => {
     fill("white");
     textSize(windowWidth / 50);
     textAlign(CENTER);
-    text(texttutorial[Math.floor(TIME / 3)], windowWidth / 2, windowHeight * 5 / 20);
+    text(texttutorial[Math.floor(TIME / 4)], windowWidth / 2, windowHeight * 5 / 20);
   }
   textAlign(CENTER);
   stroke(0);
@@ -850,7 +850,15 @@ window.draw = () => {
   rect(windowWidth * 3 / 10, windowHeight * 1 / 10, windowWidth * 4 / 10, windowHeight * 1 / 20);
   noStroke();
   fill("green");
-  rect(windowWidth * 3 / 10, windowHeight * 1 / 10, map(LVL- Math.floor(LVL), 0, 1, 0, windowWidth * 4 / 10), windowHeight * 1 / 20);
+  rect(windowWidth * 3 / 10, windowHeight * 1 / 10, map(LVL - Math.floor(LVL), 0, 1, 0, windowWidth * 4 / 10), windowHeight * 1 / 20);
+
+  stroke(0);
+  noFill();
+  rect(windowWidth * 97 / 200, windowHeight / 1.8, windowWidth * 6 / 200, windowHeight / 60);
+  noStroke();
+  fill("red");
+  // rect(windowWidth * 97 / 200, windowHeight / 1.8, map(HEALTH, 0, PLAYERMAXHEALTH, 1, windowWidth * 6 / 200), windowHeight / 60);
+  rect(windowWidth * 97 / 200, windowHeight / 1.8, map(PLAYERHEALTH, 0, PLAYERMAXHEALTH, 0, windowWidth * 6 / 200), windowHeight / 60);
   fill("white");
   textFont("Courier New");
   stroke(55, 55, 55);
