@@ -236,8 +236,8 @@ function resetStats() {
   EXPPOINTS = 10;
   // EXPPOINTS = 29;
   LVL = 1;
-  // TIME = 1;
-  TIME = 25;
+  TIME = 1;
+  // TIME = 25;
   // TIME = 600;
   PLAYERSPEED = 3.25;
   BULLETDAMAGE = 840;
