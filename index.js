@@ -106,7 +106,7 @@ function preload() {
   BOMBIMG = loadAnimation("images/bomb.png");
   HEALTHIMG = loadAnimation("images/health.png");
   EXPIMG = loadAnimation("images/experience.png");
-  let musicnumber = Math.ceil(random(3));
+  let musicnumber = Math.ceil(Math.random() * 3);
   soundFormats("mp3");
   BGMUSIC = loadSound("music/background" + musicnumber + ".mp3");
   LOSESOUND = loadSound("music/lose");
@@ -169,8 +169,8 @@ function initialize() {
   createCanvas(windowWidth, windowHeight);
 	while (EXP.length < 30) {
     new EXP.Sprite();
-    EXP.x = () => random(0, windowWidth);
-    EXP.y = () => random(0, windowHeight);
+    EXP.x = () => Math.random() * windowWidth;
+    EXP.y = () => Math.random() * windowHeight;
 	}
   overlapCheck();
   backgroundmusic();
@@ -505,14 +505,14 @@ function checkLevel() {
 function generateUpgrades() {
   fill(0, 0, 0, 180);
   rect(0, 0, windowWidth, windowHeight);
-  let option1 = Math.floor(random(0, 8));
-  let option2 = Math.floor(random(0, 8));
-  let option3 = Math.floor(random(0, 8));
+  let option1 = Math.floor(Math.random() * 8);
+  let option2 = Math.floor(Math.random() * 8);
+  let option3 = Math.floor(Math.random() * 8);
   while (option2 === option1) {
-    option2 = Math.floor(random(0, 8));
+    option2 = Math.floor(Math.random() * 8);
   }
   while (option3 === option1 || option3 === option2) {
-    option3 = Math.floor(random(0, 8));
+    option3 = Math.floor(Math.random() * 8);
   }
   let options = [option1, option2, option3];
   for (let i = 0; i < 3; i++) {
@@ -669,6 +669,10 @@ window.mousePressed = () => {
   }
 };
 
+window.windowResized = () => {
+  resizeCanvas(windowWidth, windowHeight);
+}
+
 window.draw = () => {
   if (Math.floor(PLAYERHEALTH) <= 0) {
     noLoop();
@@ -722,7 +726,7 @@ window.draw = () => {
   image(BG, x2, y1, windowWidth + 8, windowHeight + 8);
   // image(FIREIMG, 0, 10, 20, 50);
   // andy: figure out the weird random pausing when upgrading
-  fill(65, 65, 65, TIME / 1.8 - PLAYERHEALTH * 2);
+  fill(65, 65, 65, TIME / 1.5 - PLAYERHEALTH * 2);
   rect(0, 0, windowWidth, windowHeight);
   if (x1 < -windowWidth){
     x1 = windowWidth;
