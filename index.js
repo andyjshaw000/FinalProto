@@ -1,4 +1,3 @@
-// let PLAYAGAINED;
 let WEAPONCHOSEN;
 let CHOSEORBS;
 let CHOSESWORD;
@@ -131,7 +130,7 @@ function preload() {
 // enemy damaged sound
 // add boss levels
 // cleaner visuals (UPGRADEDESC and LVL in bottom right)
-// camelcase function, uppercase globals, hannah's suggestion
+// multiple files, JSON
 
 window.setup = () => {
   initialize();
@@ -160,9 +159,7 @@ function initialize() {
     }
   });
   PLAYER = new Sprite(windowWidth / 2, windowHeight / 2, 20, 40);
-  // if (!PLAYAGAINED) {
   startTime();
-  // }
   resetStats();
   groupInit();
   physicsInit();
@@ -178,7 +175,6 @@ function initialize() {
   let imagenumber = Math.ceil(Math.random() * 4);
   BG = loadImage("images/" + imagenumber + "-min.jpg");
   MOUSEIMG = loadImage("images/mouse.png");
-  // BG.resize(windowWidth, windowHeight);
 }
 
 function backgroundmusic() {
@@ -223,7 +219,6 @@ function resetStats() {
   WEAPONCHOSEN = false;
   CHOSEORBS = false;
   CHOSESWORD = false;
-  // PLAYAGAINED = false;
   FACING = "right";
   PAUSED = false;
   x1 = 0;
@@ -283,8 +278,6 @@ function chooseWeapon() {
     button.size(windowWidth / 10, windowHeight / 15);
     button.position(i * windowWidth / 3 + 3 * windowWidth / 26 + windowWidth / 6, 4 * windowHeight / 5 - 20);
     button.attribute = options[i];
-    // noLoop();
-    // clearInterval(TIMERID);
     button.mousePressed(() => {
       WEAPONCHOSEN = true;
       if (button.attribute === "Select Sun Orb") {
@@ -554,8 +547,6 @@ function generateUpgrades() {
     button.size(windowWidth / 10, windowHeight / 15);
     button.position(i * windowWidth / 3 + 3 * windowWidth / 26, 4 * windowHeight / 5 - 20);
     button.attribute = options[i];
-    // noLoop();
-    // clearInterval(TIMERID);
     button.mousePressed(() => {
     if (button.attribute === 0) {
       if (!FIREON) {
@@ -727,19 +718,12 @@ window.draw = () => {
     }
   }
   clear();
-  // BG.resize(windowWidth, windowHeight);
-  // image(MOUSEIMG, 20, windowHeight - 20, 100, 100);
   image(BG, x1, y1, windowWidth + 8, windowHeight + 8);
-  // image(BG, x1, y1, windowWidth + 1, windowHeight + 1);
-  // image(BG, x2, y1, windowWidth + 1, windowHeight + 1);
-  // image(BG, x1, y2, windowWidth + 1, windowHeight + 1);
-  // image(BG, x2, y2, windowWidth + 1, windowHeight + 1);
   image(BG, x2, y2, windowWidth + 8, windowHeight + 8);
   image(BG, x1, y2, windowWidth + 8, windowHeight + 8);
   image(BG, x2, y1, windowWidth + 8, windowHeight + 8);
   image(MOUSEIMG, 15, 18.25 * windowHeight / 20, 35, 35);
   // image(FIREIMG, 0, 10, 20, 50);
-  // andy: figure out the weird random pausing when upgrading
   fill(65, 65, 65, TIME / 1.5 - PLAYERHEALTH * 2);
   rect(0, 0, windowWidth, windowHeight);
   if (x1 < -windowWidth){
