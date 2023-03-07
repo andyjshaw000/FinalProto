@@ -429,7 +429,7 @@ function hpCollect(PLAYER, health) {
 }
 
 function damagePlayer(PLAYER) {
-  PLAYERHEALTH -= RESISTANCE * TIME / 800;
+  PLAYERHEALTH -= RESISTANCE * TIME / 1000;
   fill(255, 0, 0, 25);
   rect(0, 0, windowWidth, windowHeight);
 }
