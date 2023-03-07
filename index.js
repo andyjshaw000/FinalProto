@@ -742,6 +742,7 @@ window.draw = () => {
   image(BG, x1, y2, windowWidth + 8, windowHeight + 8);
   image(BG, x2, y1, windowWidth + 8, windowHeight + 8);
   // image(FIREIMG, 0, 10, 20, 50);
+  // andy: figure out the weird random pausing when upgrading
   fill(65, 65, 65, TIME / 1.8 - PLAYERHEALTH * 2);
   rect(0, 0, windowWidth, windowHeight);
   if (x1 < -windowWidth){
