@@ -174,7 +174,7 @@ function initialize() {
 	}
   overlapCheck();
   backgroundmusic();
-  let imagenumber = Math.ceil(random(5));
+  let imagenumber = Math.ceil(Math.random() * 5);
   BG = loadImage("images/" + imagenumber + "-min.jpg");
 }
 
@@ -236,8 +236,8 @@ function resetStats() {
   EXPPOINTS = 10;
   // EXPPOINTS = 29;
   LVL = 1;
-  TIME = 1;
-  // TIME = 25;
+  // TIME = 1;
+  TIME = 25;
   // TIME = 600;
   PLAYERSPEED = 3.25;
   BULLETDAMAGE = 840;
@@ -477,10 +477,10 @@ function bombToEnemy(weapon, enemy) {
 function enemyDeadUpdate(enemy) {
   if (enemy.life <= 0) {
     new EXP.Sprite(enemy.x, enemy.y);
-    if (random(1000) > 998.5) {
+    if (Math.random() * 1000 > 998.5) {
       new BOMBS.Sprite(enemy.x - 10, enemy.y - 10);
     }
-    if (random(1000) > 998.25) {
+    if (Math.random() * 1000 > 998.25) {
       new HEALTHS.Sprite(enemy.x + 10, enemy.y - 10);
     }
     enemy.remove();
@@ -618,21 +618,21 @@ function generateUpgrades() {
 function spawnEnemy() {
   let enemy = new ENEMIES.Sprite();
   enemy.life = 100 + Math.pow(TIME, 1.35);
-  if (random(2) > 1) {
-    if (random(2) > 1) {
-      enemy.x = random(0, PLAYER.x + windowWidth / 2);
+  if (Math.random() * 2 > 1) {
+    if (Math.random() * 2 > 1) {
+      enemy.x = Math.random() * (PLAYER.x + windowWidth / 2);
       enemy.y = PLAYER.y - windowHeight / 2;
     } else {
-      enemy.x = random(0, PLAYER.x + windowWidth / 2);
+      enemy.x = Math.random() * (PLAYER.x + windowWidth / 2);
       enemy.y = PLAYER.y + windowHeight / 2;
     }
   } else {
-    if (random(2) > 1) {
+    if (Math.random() * 2 > 1) {
       enemy.x = PLAYER.x - windowWidth / 2;
-      enemy.y = random(0, PLAYER.y + windowHeight / 2);
+      enemy.y = Math.random() * (PLAYER.y + windowHeight / 2);
     } else {
       enemy.x = PLAYER.x + windowWidth / 2;
-      enemy.y = random(0, PLAYER.y + windowHeight / 2);
+      enemy.y = Math.random() * (PLAYER.y + windowHeight / 2);
     }
   }
 }
