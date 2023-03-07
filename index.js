@@ -259,6 +259,8 @@ function resetStats() {
 }
 
 function chooseWeapon() {
+  noLoop();
+  clearInterval(TIMERID);
   fill(0, 0, 0, 180);
   rect(0, 0, windowWidth, windowHeight);
   optionsdescription = ["Select a sun orb that you can use to shoot enemies from afar", "Select a sun sword that allows you to slash through multiple enemies at close range"];
@@ -271,7 +273,7 @@ function chooseWeapon() {
     buttonback.style("font-size", windowWidth / 50 + "px");
     buttonback.style("border", windowWidth / 200 + "px solid black");
     buttonback.size(windowWidth / 4, 2 * windowHeight / 3);
-    buttonback.position(i * windowWidth / 3 + 1 * windowWidth / 26 + windowWidth / 6, 1 * windowHeight / 5);
+    buttonback.position(i * windowWidth / 3 + windowWidth / 26 + windowWidth / 6, windowHeight / 5);
     let button = createButton(options[i]);
     button.style("border-radius", windowWidth / 120 + "px");
     button.style("background-color", "white");
@@ -279,8 +281,8 @@ function chooseWeapon() {
     button.size(windowWidth / 10, windowHeight / 15);
     button.position(i * windowWidth / 3 + 3 * windowWidth / 26 + windowWidth / 6, 4 * windowHeight / 5 - 20);
     button.attribute = options[i];
-    noLoop();
-    clearInterval(TIMERID);
+    // noLoop();
+    // clearInterval(TIMERID);
     button.mousePressed(() => {
       WEAPONCHOSEN = true;
       if (button.attribute === "Select Sun Orb") {
@@ -504,6 +506,8 @@ function checkLevel() {
 }
 
 function generateUpgrades() {
+  noLoop();
+  clearInterval(TIMERID);
   fill(0, 0, 0, 180);
   rect(0, 0, windowWidth, windowHeight);
   let option1 = Math.floor(Math.random() * 8);
@@ -540,7 +544,7 @@ function generateUpgrades() {
     buttonback.style("font-size", windowWidth / 50 + "px");
     buttonback.style("border", windowWidth / 200 + "px solid black");
     buttonback.size(windowWidth / 4, 2 * windowHeight / 3);
-    buttonback.position(i * windowWidth / 3 + 1 * windowWidth / 26, 1 * windowHeight / 5);
+    buttonback.position(i * windowWidth / 3 + windowWidth / 26, windowHeight / 5);
     let button = createButton(UPGRADEDESC[options[i]][0]);
     button.style("border-radius", windowWidth / 120 + "px");
     button.style("background-color", "white");
@@ -548,8 +552,8 @@ function generateUpgrades() {
     button.size(windowWidth / 10, windowHeight / 15);
     button.position(i * windowWidth / 3 + 3 * windowWidth / 26, 4 * windowHeight / 5 - 20);
     button.attribute = options[i];
-    noLoop();
-    clearInterval(TIMERID);
+    // noLoop();
+    // clearInterval(TIMERID);
     button.mousePressed(() => {
     if (button.attribute === 0) {
       if (!FIREON) {
@@ -689,7 +693,7 @@ window.draw = () => {
     buttonback.style("border", "none");
     buttonback.style("font-size", windowWidth / 50 + "px");
     buttonback.size(windowWidth / 2, 2 * windowHeight / 3);
-    buttonback.position(windowWidth / 6 + 2 / 24 * windowWidth, 1 * windowHeight / 5);
+    buttonback.position(windowWidth / 6 + 2 / 24 * windowWidth, windowHeight / 5);
     let div = createDiv("Score: " + SCORE);
     div.style("color", "white");
     div.style("font-size", windowWidth / 60 + "px");
