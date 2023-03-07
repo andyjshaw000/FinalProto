@@ -174,7 +174,7 @@ function initialize() {
 	}
   overlapCheck();
   backgroundmusic();
-  let imagenumber = Math.ceil(random(5));
+  let imagenumber = Math.ceil(Math.random() * 5);
   BG = loadImage("images/" + imagenumber + "-min.jpg");
 }
 
@@ -236,8 +236,8 @@ function resetStats() {
   EXPPOINTS = 10;
   // EXPPOINTS = 29;
   LVL = 1;
-  TIME = 1;
-  // TIME = 25;
+  // TIME = 1;
+  TIME = 25;
   // TIME = 600;
   PLAYERSPEED = 3.25;
   BULLETDAMAGE = 840;
@@ -476,13 +476,11 @@ function bombToEnemy(weapon, enemy) {
 
 function enemyDeadUpdate(enemy) {
   if (enemy.life <= 0) {
-    if (random(10) > 3) {
-      new EXP.Sprite(enemy.x, enemy.y);
-    }
-    if (random(1000) > 998.5) {
+    new EXP.Sprite(enemy.x, enemy.y);
+    if (Math.random() * 1000 > 998.5) {
       new BOMBS.Sprite(enemy.x - 10, enemy.y - 10);
     }
-    if (random(1000) > 998.25) {
+    if (Math.random() * 1000 > 998.25) {
       new HEALTHS.Sprite(enemy.x + 10, enemy.y - 10);
     }
     enemy.remove();
@@ -577,7 +575,7 @@ function generateUpgrades() {
       HEALTHLVLUPSOUND.play();
       HEALTHLVLUPSOUND.setVolume(.3);
     } else if (button.attribute === 4) {
-      RESISTANCE = RESISTANCE * .96;
+      RESISTANCE *= .96;
       DEFENSELVLUPSOUND.play();
       DEFENSELVLUPSOUND.setVolume(.2);
     } else if (button.attribute === 5) {
@@ -598,7 +596,7 @@ function generateUpgrades() {
     } else if (button.attribute === 7) {
       if (!WATERON) {
         new WATER.Sprite();
-        WATER.layer = 1;
+        WATER.layer = -100;
         WATERON = true;
       } else {
         WATERFIELDDAMAGE += .6;
@@ -620,21 +618,21 @@ function generateUpgrades() {
 function spawnEnemy() {
   let enemy = new ENEMIES.Sprite();
   enemy.life = 100 + Math.pow(TIME, 1.35);
-  if (random(2) > 1) {
-    if (random(2) > 1) {
-      enemy.x = random(0, PLAYER.x + windowWidth / 2);
+  if (Math.random() * 2 > 1) {
+    if (Math.random() * 2 > 1) {
+      enemy.x = Math.random() * (PLAYER.x + windowWidth / 2);
       enemy.y = PLAYER.y - windowHeight / 2;
     } else {
-      enemy.x = random(0, PLAYER.x + windowWidth / 2);
+      enemy.x = Math.random() * (PLAYER.x + windowWidth / 2);
       enemy.y = PLAYER.y + windowHeight / 2;
     }
   } else {
-    if (random(2) > 1) {
+    if (Math.random() * 2 > 1) {
       enemy.x = PLAYER.x - windowWidth / 2;
-      enemy.y = random(0, PLAYER.y + windowHeight / 2);
+      enemy.y = Math.random() * (PLAYER.y + windowHeight / 2);
     } else {
       enemy.x = PLAYER.x + windowWidth / 2;
-      enemy.y = random(0, PLAYER.y + windowHeight / 2);
+      enemy.y = Math.random() * (PLAYER.y + windowHeight / 2);
     }
   }
 }
@@ -705,7 +703,7 @@ window.draw = () => {
       clear();
       LOSESOUND.stop();
       initialize();
-      TIME = 20;
+      TIME = 30;
       loop();
       buttonback.remove();
       div.remove();
@@ -748,7 +746,7 @@ window.draw = () => {
   }
   if (frameCount % 200 === 0 && TIME > 20) {
     for (let i = 0; i < TIME * Math.pow(windowWidth, 2) / 15000000; i++) {
-      if (ENEMIES.length < Math.pow(windowWidth, 2) / 12000) {
+      if (ENEMIES.length < Math.pow(windowWidth, 2) / 13000) {
         spawnEnemy();
       }
     }
@@ -834,47 +832,40 @@ window.draw = () => {
     }
   }
   if (TIME <= 32) {
-    let texttutorial = ["Fight against the shadow warriors who are plotting to attack the Sun.", "Attack with your LMB and use abilities to defeat them.",
-        "Be careful not to get near the shadows.", "Move around with WASD and dodge their necrotic attacks.",
+    let texttutorial = ["Fight against the shadow warriors who are plotting to attack the Sun.",
+        "Be careful not to get near the shadows.", "Move around with WASD and dodge their necrotic attacks.", "Attack with your LMB and use abilities to defeat them.",
         "As you defeat more shadows, they'll drop sun souls.", "Use these souls to level up and become stronger.",
         "As you collect souls, you'll gain powers.",
         "Help save the Sun from danger. Good luck!"];
     fill("white");
     textSize(windowWidth / 50);
     textAlign(CENTER);
-    text(texttutorial[Math.floor(TIME / 4)], windowWidth / 2, windowHeight * 5 / 20);
+    text(texttutorial[Math.floor(TIME / 4)], windowWidth / 2, windowHeight / 4);
   }
   textAlign(CENTER);
-  stroke(0);
   noFill();
-  rect(windowWidth * 3 / 10, windowHeight * 1 / 10, windowWidth * 4 / 10, windowHeight * 1 / 20);
-  noStroke();
+  rect(windowWidth * 3 / 10, windowHeight / 10, windowWidth * 2 / 5, windowHeight / 20);
+  rect(windowWidth * 97 / 200, windowHeight / 1.8, windowWidth * 3 / 100, windowHeight / 60);
   fill("green");
-  rect(windowWidth * 3 / 10, windowHeight * 1 / 10, map(LVL - Math.floor(LVL), 0, 1, 0, windowWidth * 4 / 10), windowHeight * 1 / 20);
-
-  stroke(0);
-  noFill();
-  rect(windowWidth * 97 / 200, windowHeight / 1.8, windowWidth * 6 / 200, windowHeight / 60);
-  noStroke();
+  rect(windowWidth * 3 / 10, windowHeight / 10, map(LVL - Math.floor(LVL), 0, 1, 0, windowWidth * 2 / 5), windowHeight / 20);
   fill("red");
-  // rect(windowWidth * 97 / 200, windowHeight / 1.8, map(HEALTH, 0, PLAYERMAXHEALTH, 1, windowWidth * 6 / 200), windowHeight / 60);
-  rect(windowWidth * 97 / 200, windowHeight / 1.8, map(PLAYERHEALTH, 0, PLAYERMAXHEALTH, 0, windowWidth * 6 / 200), windowHeight / 60);
+  rect(windowWidth * 97 / 200, windowHeight / 1.8, map(PLAYERHEALTH, 0, PLAYERMAXHEALTH, 0, windowWidth * 3 / 100), windowHeight / 60);
   fill("white");
   textFont("Courier New");
-  stroke(55, 55, 55);
-  strokeWeight(2);
+  stroke(45, 45, 45);
+  strokeWeight(2.5);
   textSize(windowWidth / 70);
-  text("Score: " + SCORE, windowWidth - 140, windowHeight * 1 / 20);
+  text("Score: " + SCORE, windowWidth - 140, windowHeight / 20);
   let minutes = Math.floor(TIME / 60);
   let extraSeconds = TIME % 60;
   minutes = minutes < 10 ? "0" + minutes : minutes;
   extraSeconds = extraSeconds < 10 ? "0" + extraSeconds : extraSeconds;
-  text("Time: " + minutes + ":" + extraSeconds, 80, windowHeight * 1 / 20);
+  text("Time: " + minutes + ":" + extraSeconds, 80, windowHeight / 20);
   text("LMB: Attack", 80, windowHeight * 19 / 20);
   text("Health: " + Math.floor(PLAYERHEALTH) + "/" + PLAYERMAXHEALTH, windowWidth * 10 / 13, windowHeight * 2 / 15);
   textSize(windowWidth / 60);
   textFont("Arial");
-  text("Level: " + Math.floor(LVL), windowWidth / 2, windowHeight * 1 / 11);
+  text("Level: " + Math.floor(LVL), windowWidth / 2, windowHeight / 11);
   if (EARTHON) {
     for (let i = 1; i < EARTH.length + 1; i++) {
       let spacing = (i * 2 * Math.PI / EARTH.length);
@@ -919,7 +910,7 @@ window.draw = () => {
       }
     }
   }
-  if (TIME > 20 && !WEAPONCHOSEN) {
+  if (TIME > 15 && !WEAPONCHOSEN) {
     redraw();
     UPGRADESOUND.play();
     UPGRADESOUND.setVolume(.1);
