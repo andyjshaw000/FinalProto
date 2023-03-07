@@ -106,7 +106,7 @@ function preload() {
   BOMBIMG = loadAnimation("images/bomb.png");
   HEALTHIMG = loadAnimation("images/health.png");
   EXPIMG = loadAnimation("images/experience.png");
-  let musicnumber = Math.ceil(random(3));
+  let musicnumber = Math.ceil(Math.random() * 3);
   soundFormats("mp3");
   BGMUSIC = loadSound("music/background" + musicnumber + ".mp3");
   LOSESOUND = loadSound("music/lose");
@@ -169,13 +169,14 @@ function initialize() {
   createCanvas(windowWidth, windowHeight);
 	while (EXP.length < 30) {
     new EXP.Sprite();
-    EXP.x = () => random(0, windowWidth);
-    EXP.y = () => random(0, windowHeight);
+    EXP.x = () => Math.random() * windowWidth;
+    EXP.y = () => Math.random() * windowHeight;
 	}
   overlapCheck();
   backgroundmusic();
-  let imagenumber = Math.ceil(Math.random() * 5);
+  let imagenumber = Math.ceil(Math.random() * 4);
   BG = loadImage("images/" + imagenumber + "-min.jpg");
+  // BG.resize(windowWidth, windowHeight);
 }
 
 function backgroundmusic() {
@@ -258,6 +259,8 @@ function resetStats() {
 }
 
 function chooseWeapon() {
+  noLoop();
+  clearInterval(TIMERID);
   fill(0, 0, 0, 180);
   rect(0, 0, windowWidth, windowHeight);
   optionsdescription = ["Select a sun orb that you can use to shoot enemies from afar", "Select a sun sword that allows you to slash through multiple enemies at close range"];
@@ -270,7 +273,7 @@ function chooseWeapon() {
     buttonback.style("font-size", windowWidth / 50 + "px");
     buttonback.style("border", windowWidth / 200 + "px solid black");
     buttonback.size(windowWidth / 4, 2 * windowHeight / 3);
-    buttonback.position(i * windowWidth / 3 + 1 * windowWidth / 26 + windowWidth / 6, 1 * windowHeight / 5);
+    buttonback.position(i * windowWidth / 3 + windowWidth / 26 + windowWidth / 6, windowHeight / 5);
     let button = createButton(options[i]);
     button.style("border-radius", windowWidth / 120 + "px");
     button.style("background-color", "white");
@@ -278,8 +281,8 @@ function chooseWeapon() {
     button.size(windowWidth / 10, windowHeight / 15);
     button.position(i * windowWidth / 3 + 3 * windowWidth / 26 + windowWidth / 6, 4 * windowHeight / 5 - 20);
     button.attribute = options[i];
-    noLoop();
-    clearInterval(TIMERID);
+    // noLoop();
+    // clearInterval(TIMERID);
     button.mousePressed(() => {
       WEAPONCHOSEN = true;
       if (button.attribute === "Select Sun Orb") {
@@ -503,16 +506,18 @@ function checkLevel() {
 }
 
 function generateUpgrades() {
+  noLoop();
+  clearInterval(TIMERID);
   fill(0, 0, 0, 180);
   rect(0, 0, windowWidth, windowHeight);
-  let option1 = Math.floor(random(0, 8));
-  let option2 = Math.floor(random(0, 8));
-  let option3 = Math.floor(random(0, 8));
+  let option1 = Math.floor(Math.random() * 8);
+  let option2 = Math.floor(Math.random() * 8);
+  let option3 = Math.floor(Math.random() * 8);
   while (option2 === option1) {
-    option2 = Math.floor(random(0, 8));
+    option2 = Math.floor(Math.random() * 8);
   }
   while (option3 === option1 || option3 === option2) {
-    option3 = Math.floor(random(0, 8));
+    option3 = Math.floor(Math.random() * 8);
   }
   let options = [option1, option2, option3];
   for (let i = 0; i < 3; i++) {
@@ -539,7 +544,7 @@ function generateUpgrades() {
     buttonback.style("font-size", windowWidth / 50 + "px");
     buttonback.style("border", windowWidth / 200 + "px solid black");
     buttonback.size(windowWidth / 4, 2 * windowHeight / 3);
-    buttonback.position(i * windowWidth / 3 + 1 * windowWidth / 26, 1 * windowHeight / 5);
+    buttonback.position(i * windowWidth / 3 + windowWidth / 26, windowHeight / 5);
     let button = createButton(UPGRADEDESC[options[i]][0]);
     button.style("border-radius", windowWidth / 120 + "px");
     button.style("background-color", "white");
@@ -547,8 +552,8 @@ function generateUpgrades() {
     button.size(windowWidth / 10, windowHeight / 15);
     button.position(i * windowWidth / 3 + 3 * windowWidth / 26, 4 * windowHeight / 5 - 20);
     button.attribute = options[i];
-    noLoop();
-    clearInterval(TIMERID);
+    // noLoop();
+    // clearInterval(TIMERID);
     button.mousePressed(() => {
     if (button.attribute === 0) {
       if (!FIREON) {
@@ -669,8 +674,12 @@ window.mousePressed = () => {
   }
 };
 
+window.windowResized = () => {
+  resizeCanvas(windowWidth, windowHeight);
+};
+
 window.draw = () => {
-  if (Math.floor(PLAYERHEALTH) <= 0) {
+  if (PLAYERHEALTH <= 0) {
     noLoop();
     clearInterval(TIMERID);
     BGMUSIC.stop();
@@ -684,7 +693,7 @@ window.draw = () => {
     buttonback.style("border", "none");
     buttonback.style("font-size", windowWidth / 50 + "px");
     buttonback.size(windowWidth / 2, 2 * windowHeight / 3);
-    buttonback.position(windowWidth / 6 + 2 / 24 * windowWidth, 1 * windowHeight / 5);
+    buttonback.position(windowWidth / 6 + 2 / 24 * windowWidth, windowHeight / 5);
     let div = createDiv("Score: " + SCORE);
     div.style("color", "white");
     div.style("font-size", windowWidth / 60 + "px");
@@ -716,13 +725,18 @@ window.draw = () => {
     }
   }
   clear();
+  // BG.resize(windowWidth, windowHeight);
   image(BG, x1, y1, windowWidth + 8, windowHeight + 8);
+  // image(BG, x1, y1, windowWidth + 1, windowHeight + 1);
+  // image(BG, x2, y1, windowWidth + 1, windowHeight + 1);
+  // image(BG, x1, y2, windowWidth + 1, windowHeight + 1);
+  // image(BG, x2, y2, windowWidth + 1, windowHeight + 1);
   image(BG, x2, y2, windowWidth + 8, windowHeight + 8);
   image(BG, x1, y2, windowWidth + 8, windowHeight + 8);
   image(BG, x2, y1, windowWidth + 8, windowHeight + 8);
   // image(FIREIMG, 0, 10, 20, 50);
   // andy: figure out the weird random pausing when upgrading
-  fill(65, 65, 65, TIME / 1.8 - PLAYERHEALTH * 2);
+  fill(65, 65, 65, TIME / 1.5 - PLAYERHEALTH * 2);
   rect(0, 0, windowWidth, windowHeight);
   if (x1 < -windowWidth){
     x1 = windowWidth;
@@ -897,7 +911,7 @@ window.draw = () => {
   }
   camera.x = PLAYER.x;
   camera.y = PLAYER.y;
-  if (FIREON && frameCount % 150 === 0) {
+  if (FIREON && frameCount % 130 === 0) {
     for (let i = 0; i < FIRECT; i++) {
       let fireball = new FIRE.Sprite();
       fireball.x = PLAYER.x;
