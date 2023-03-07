@@ -236,7 +236,7 @@ function resetStats() {
   EXPPOINTS = 10;
   // EXPPOINTS = 29;
   LVL = 1;
-  TIME = 19;
+  TIME = 1;
   // TIME = 25;
   // TIME = 600;
   PLAYERSPEED = 3.25;
@@ -279,7 +279,6 @@ function chooseWeapon() {
     button.position(i * windowWidth / 3 + 3 * windowWidth / 26 + windowWidth / 6, 4 * windowHeight / 5 - 20);
     button.attribute = options[i];
     noLoop();
-    // PAUSED = true;
     clearInterval(TIMERID);
     button.mousePressed(() => {
       WEAPONCHOSEN = true;
@@ -294,7 +293,6 @@ function chooseWeapon() {
       }
       startTime();
       loop();
-      // PAUSED = false;
     });
   }
 }
@@ -313,22 +311,11 @@ function groupInit() {
 }
 
 function physicsInit() {
-  // allSprites.autoCull = false;
-  // BOMBS.diameter = 20;
-  // EARTH.diameter = 60;
-  // HEALTHS.diameter = 30;
-  // FIRE.diameter = 80;
-	// experience.diameter = 10;
   PLAYER.collider = "kinematic";
   SWORDS.collider = "kinematic";
   PLAYER.rotationLock = true;
-  // AIR.friction = 0;
   AIR.x = PLAYER.x;
   AIR.y = PLAYER.y;
-  // AIR.diameter = 55;
-  // WATER.diameter = 180;
-  // enemies.width = 15;
-  // enemies.height = 30;
   ENEMIES.rotationLock = true;
 }
 
@@ -426,6 +413,8 @@ function expCollect(PLAYER, EXP) {
 function bombCollect(PLAYER, bomb) {
   BOMBSOUND.play();
   BOMBSOUND.setVolume(.25);
+  fill(255, 255, 255, 160);
+  rect(0, 0, windowWidth, windowHeight);
   bomb.remove();
   for (let i = 0; i < ENEMIES.length; i++) {
     bombToEnemy(bomb, ENEMIES[i]);
@@ -440,7 +429,7 @@ function hpCollect(PLAYER, health) {
 }
 
 function damagePlayer(PLAYER) {
-  PLAYERHEALTH -= RESISTANCE * TIME / 800;
+  PLAYERHEALTH -= RESISTANCE * TIME / 1000;
   fill(255, 0, 0, 25);
   rect(0, 0, windowWidth, windowHeight);
 }
@@ -483,8 +472,6 @@ function earthToEnemy(weapon, enemy) {
 function bombToEnemy(weapon, enemy) {
   enemy.life = -1;
   enemyDeadUpdate(enemy);
-  // fill(10, 10, 10, 25);
-  // rect(0, 0, windowWidth, windowHeight);
 }
 
 function enemyDeadUpdate(enemy) {
@@ -563,7 +550,6 @@ function generateUpgrades() {
     button.position(i * windowWidth / 3 + 3 * windowWidth / 26, 4 * windowHeight / 5 - 20);
     button.attribute = options[i];
     noLoop();
-    // PAUSED = true;
     clearInterval(TIMERID);
     button.mousePressed(() => {
     if (button.attribute === 0) {
@@ -626,7 +612,6 @@ function generateUpgrades() {
     }
     startTime();
     loop();
-    // PAUSED = false;
   });
 
   }
@@ -667,7 +652,6 @@ window.mousePressed = () => {
     let sword = new SWORDS.Sprite([[PLAYER.x, PLAYER.y], [mouse.x + PLAYER.mouse.x, mouse.y + PLAYER.mouse.y]]);
     if (PLAYER.x > mouse.x + PLAYER.mouse.x) {
       if (PLAYER.y > mouse.y + PLAYER.mouse.y) {
-        // offset can be done preload
         sword.ani = "SWORDIMG_L";
       } else {
         sword.ani = "SWORDIMG_D";
@@ -690,7 +674,6 @@ window.mousePressed = () => {
 window.draw = () => {
   if (Math.floor(PLAYERHEALTH) <= 0) {
     noLoop();
-    // PAUSED = true;
     clearInterval(TIMERID);
     BGMUSIC.stop();
     LOSESOUND.play();
@@ -718,14 +701,12 @@ window.draw = () => {
     playagain.size(windowWidth / 10, windowHeight / 15);
     playagain.position(windowWidth / 3 + 3 * windowWidth / 26, 4 * windowHeight / 5 - 20);
     playagain.mousePressed(() => {
-      // PLAYAGAINED = true;
       allSprites.remove();
       clear();
       LOSESOUND.stop();
       initialize();
       TIME = 20;
       loop();
-      // PAUSED = false;
       buttonback.remove();
       div.remove();
       playagain.remove();
@@ -793,12 +774,6 @@ window.draw = () => {
       ENEMIES[i].speed = .75 * (2.5 + TIME / 300);
     }
   }
-  // for (let i = 0; i < experience.length; i++) {
-  //   if (experience[i].life <= 99997300) {
-  //     experience[i].remove();
-  //     EXPPOINTS += 1;
-  //   }
-  // }
   if (kb.pressing("down") && kb.pressing("left")) {
     PLAYER.ani = "left";
     FACING = "left";
@@ -935,21 +910,7 @@ window.draw = () => {
         FIRE[i].remove();
       }
     }
-    // if (FACING === "right") {
-    //   PLAYER.ani = "rightattack";
-    // } else {
-    //   PLAYER.ani = "leftattack";
-    // }
   }
-  // if (TIME % 180 === 0) {
-  //   enemies.remove();
-  //   experience.remove();
-  //   BOMBS.remove();
-  //   HEALTHS.remove();
-  //   ORBS.remove();
-  //   FIRE.remove();
-  //   TIME += 1;
-  // }
   if (TIME > 20 && !WEAPONCHOSEN) {
     redraw();
     UPGRADESOUND.play();
