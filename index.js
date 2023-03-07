@@ -174,8 +174,9 @@ function initialize() {
 	}
   overlapCheck();
   backgroundmusic();
-  let imagenumber = Math.ceil(Math.random() * 5);
+  let imagenumber = Math.ceil(Math.random() * 4);
   BG = loadImage("images/" + imagenumber + "-min.jpg");
+  // BG.resize(windowWidth, windowHeight);
 }
 
 function backgroundmusic() {
@@ -674,7 +675,7 @@ window.windowResized = () => {
 }
 
 window.draw = () => {
-  if (Math.floor(PLAYERHEALTH) <= 0) {
+  if (PLAYERHEALTH <= 0) {
     noLoop();
     clearInterval(TIMERID);
     BGMUSIC.stop();
@@ -720,7 +721,12 @@ window.draw = () => {
     }
   }
   clear();
+  // BG.resize(windowWidth, windowHeight);
   image(BG, x1, y1, windowWidth + 8, windowHeight + 8);
+  // image(BG, x1, y1, windowWidth + 1, windowHeight + 1);
+  // image(BG, x2, y1, windowWidth + 1, windowHeight + 1);
+  // image(BG, x1, y2, windowWidth + 1, windowHeight + 1);
+  // image(BG, x2, y2, windowWidth + 1, windowHeight + 1);
   image(BG, x2, y2, windowWidth + 8, windowHeight + 8);
   image(BG, x1, y2, windowWidth + 8, windowHeight + 8);
   image(BG, x2, y1, windowWidth + 8, windowHeight + 8);
@@ -901,7 +907,7 @@ window.draw = () => {
   }
   camera.x = PLAYER.x;
   camera.y = PLAYER.y;
-  if (FIREON && frameCount % 150 === 0) {
+  if (FIREON && frameCount % 130 === 0) {
     for (let i = 0; i < FIRECT; i++) {
       let fireball = new FIRE.Sprite();
       fireball.x = PLAYER.x;
