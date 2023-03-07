@@ -278,6 +278,7 @@ function chooseWeapon() {
     button.position(i * windowWidth / 3 + 3 * windowWidth / 26 + windowWidth / 6, 4 * windowHeight / 5 - 20);
     button.attribute = options[i];
     noLoop();
+    PAUSED = true;
     clearInterval(timerid);
     button.mousePressed(() => {
       WEAPONCHOSEN = true;
@@ -292,6 +293,7 @@ function chooseWeapon() {
       }
       startTime();
       loop();
+      PAUSED = false;
     });
   }
 }
@@ -560,6 +562,7 @@ function generateUpgrades() {
     button.position(i * windowWidth / 3 + 3 * windowWidth / 26, 4 * windowHeight / 5 - 20);
     button.attribute = options[i];
     noLoop();
+    PAUSED = true;
     clearInterval(timerid);
     button.mousePressed(() => {
     if (button.attribute === 0) {
@@ -622,6 +625,7 @@ function generateUpgrades() {
     }
     startTime();
     loop();
+    PAUSED = false;
   });
 
   }
@@ -685,6 +689,7 @@ window.mousePressed = () => {
 window.draw = () => {
   if (Math.floor(PLAYERHEALTH) <= 0) {
     noLoop();
+    PAUSED = true;
     clearInterval(timerid);
     backgroundsounds.stop();
     losesound.play();
@@ -717,6 +722,7 @@ window.draw = () => {
       initialize();
       time = 20;
       loop();
+      PAUSED = false;
       buttonback.remove();
       div.remove();
       playagain.remove();
@@ -868,7 +874,7 @@ window.draw = () => {
   textFont("Courier New");
   stroke(55, 55, 55);
   strokeWeight(2);
-  textSize(windowWidth / 80);
+  textSize(windowWidth / 70);
   text("Score: " + SCORE, windowWidth - 140, windowHeight * 1 / 20);
   let minutes = Math.floor(time / 60);
   let extraSeconds = time % 60;
